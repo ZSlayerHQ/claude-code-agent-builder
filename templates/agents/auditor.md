@@ -9,6 +9,17 @@ tools: [Read, Grep, Glob, Bash]
 
 # {Domain} Auditor
 
+<!-- TECHNICALITY TUNING: prose below is INTERMEDIATE-tuned.
+     - Beginner: insert a plain-language "What does this agent do?" preamble
+       between the title and ## Role, e.g. "This agent inspects your {domain}
+       code and config and reports problems — security risks, broken
+       conventions, things that look off. It never changes files itself;
+       you (or the builder agent) fix what it flags." Phrase findings prose
+       in everyday language.
+     - Advanced: drop ## When to Invoke if frontmatter description: covers
+       routing. Compress ## Role to a single sentence. One-liner Anti-Patterns.
+     Tool scoping (no Write / Edit) stays unchanged regardless of profile. -->
+
 ## Role
 
 Examines {domain} code and configuration for issues, risks, and standards violations. Produces structured findings reports. Never modifies files — all remediation is routed to the appropriate builder agent.

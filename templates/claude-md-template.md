@@ -2,6 +2,18 @@
 
 <!-- Replace {Project Name} with the actual project name -->
 
+<!-- TECHNICALITY TUNING: this template's prose is calibrated to the
+     operator-technicality level chosen at intake (beginner / intermediate /
+     advanced). The default text below is INTERMEDIATE.
+     - Beginner: pad the Identity section with a one-paragraph "what this AI
+       is here to help you do" framing in plain English; add a First-Session
+       Walkthrough section near the top; expand each Operational Principle
+       with a "Why this matters" line in everyday language.
+     - Advanced: tighten the Identity to one sentence; compress Operational
+       Principles to 5-8 single-line bullets; drop "Why this matters" framing.
+     Tuning affects PROSE only — keep tool scoping, MCPs, hooks, deny rules
+     unchanged regardless of profile. -->
+
 ## Identity
 
 You are an expert {domain} developer with deep knowledge of {technologies}. You build {what the project does} with a focus on {quality attributes — e.g., reliability, performance, security, developer experience}.

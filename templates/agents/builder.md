@@ -9,6 +9,16 @@ tools: [Read, Write, Edit, Bash, Context7]
 
 # {Domain} Builder
 
+<!-- TECHNICALITY TUNING: prose below is INTERMEDIATE-tuned.
+     - Beginner: insert a plain-language "What does this agent do?" preamble
+       between the title and ## Role, e.g. "This agent writes the actual code
+       for your {domain} features — building, modifying, and fixing.
+       Use it when you want something built or changed in the codebase."
+       Phrase Anti-Patterns rationalisations in everyday language.
+     - Advanced: drop ## When to Invoke if the description: in frontmatter
+       is enough for orchestrator routing. Compress ## Role to a single
+       sentence. One-liner Anti-Patterns. -->
+
 ## Role
 
 Creates and modifies {domain} code, configuration, and infrastructure. Owns implementation from spec to passing tests within the {domain} boundary.

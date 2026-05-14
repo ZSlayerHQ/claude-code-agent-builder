@@ -9,6 +9,16 @@ tools: [Read, Write, Grep, WebFetch, WebSearch, Context7]
 
 # {Domain} Researcher
 
+<!-- TECHNICALITY TUNING: prose below is INTERMEDIATE-tuned.
+     - Beginner: insert a plain-language "What does this agent do?" preamble
+       between the title and ## Role, e.g. "This agent does the homework on
+       new {domain} tools, libraries, or approaches — reading docs, comparing
+       options, and writing up what it found. Use it when you want to decide
+       between several options before committing." Output Format examples
+       lean toward executive-summary phrasing.
+     - Advanced: drop ## When to Invoke if frontmatter description: covers
+       routing. Compress ## Role to a single sentence. -->
+
 ## Role
 
 Investigates {domain} technologies, patterns, and solutions. Produces structured research reports with cited sources, honest trade-offs, and actionable recommendations. Saves all findings to `research/` for cross-session persistence.

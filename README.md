@@ -63,7 +63,7 @@ The builder will run the 4-5 intake questions, propose a roster, and on approval
 - **`CLAUDE.md`** — the builder's own identity + operating rules
 - **`templates/`** — every starting point the builder copies into a generated project
 - **`references/`** — the builder's knowledge base (15 reference docs covering Anthropic guidelines, decomposition heuristics, tool scoping, MCP design, security patterns, the slimming guide, research-wave dispatch, lexicon discipline, etc.)
-- **`scripts/check-template-paths.sh`** — drift guard. Run before committing template changes — catches BAB-internal paths that would dangle in every generated project.
+- **`scripts/check-template-paths.sh`** — drift guard. Run before committing template changes — catches agent-builder-internal paths that would dangle in every generated project.
 - **`.claude/rules/`** — auto-loaded operating rules (identity + output-format)
 - **`session-docs/`** — `GOTCHAS.md` (8 real failure modes with fixes) + `AUDIT-CHECKLIST.md` (8-step honest-audit procedure)
 
