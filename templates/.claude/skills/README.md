@@ -30,12 +30,21 @@ Manual path: copy `_example/SKILL.md` into a new subdirectory (`<skill-name>/SKI
   README.md                  ← you are here
   _example/
     SKILL.md                 ← starter template; delete or rename
+  stale-docs-audit/
+    SKILL.md                 ← ships by default — 6-check documentation rot scan
   <your-skill-name>/
     SKILL.md                 ← canonical filename (required)
     references/              ← optional supporting docs the skill can read
 ```
 
 The `SKILL.md` filename is mandatory — Claude Code looks for that exact name inside each skill directory.
+
+## Skills that ship by default
+
+| Skill | Activation | Purpose |
+|---|---|---|
+| `stale-docs-audit` | "audit the docs" / "are the docs current?" / `/stale-docs-audit` | 6-check scan: dead file-path citations, version mismatch, dead SHAs, last-modified gap, TODO/FIXME markers, renamed-file ghosts. Produces a structured RED/AMBER/GREEN report. |
+| `codex-dispatch` *(optional)* | "run codex" / "verify with codex" | Independent static-analysis verifier via OpenAI Codex CLI for medium-to-large changes. Only ships if the operator confirmed Codex CLI is installed at project generation time. |
 
 ## Activation
 
