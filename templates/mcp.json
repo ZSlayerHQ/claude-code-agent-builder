@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/mcp-config.json",
+  "mcpServers": {
+    "context7": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp@latest"],
+      "env": {}
+    },
+    "gitnexus": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "gitnexus@latest"],
+      "env": {}
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"],
+      "env": {}
+    },
+    "scrapling": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["scrapling", "mcp"],
+      "env": {}
+    }
+  }
+}

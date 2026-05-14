@@ -1,0 +1,26 @@
+claude-code-agent-builder
+Copyright 2026 ZSlayerHQ and contributors
+
+Licensed under the Apache License, Version 2.0 (the "License").
+You may not use this product except in compliance with the License.
+A copy of the License is included in the file `LICENSE`.
+
+---
+
+Third-party attribution
+=======================
+
+This project includes work derived from the following sources:
+
+- Nous Research / hermes-agent (MIT licence)
+  https://github.com/nousresearch/hermes-agent
+  The prompt-injection scan hook's pattern catalogue
+  (templates/.claude/hooks/prompt-injection-scan.mjs) is conceptually
+  derived from Hermes's `agent/prompt_builder.py`. MIT permits
+  redistribution under Apache-2.0.
+
+- obra/superpowers (community plugin)
+  The anti-pattern framing convention used in templates/agents/*.md
+  ("Pattern — _'excuse the model will tell itself'_ — explanation —
+  what to do instead") is adapted from the superpowers plugin's
+  anti-pattern entries.

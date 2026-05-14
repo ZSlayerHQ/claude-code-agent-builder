@@ -1,0 +1,273 @@
+# Schema of Schemas (v2)
+#
+# Every yml file in lexicon/resources/<resource>.yml must conform to this schema.
+# Code generation (Prisma, Zod, TS types, OpenAPI) reads from <resource>.yml; this
+# file defines the *shape* those <resource>.yml files must take.
+#
+# Locked decisions: see lexicon/resources/README.md.
+# Overrides: see lexicon/DRIFT-REGISTER.md.
+# Verb whitelist: see docs/agents/00-NAMING-CONVENTIONS.md.
+#
+# When extending this schema, add a Drift Register entry referencing the schema layer.
+
+schema_version: 2
+
+# 19 required layers + 3 optional cross-cut layers per resource.
+
+required_layers:
+  - resource          # 1
+  - kind              # 2
+  - canonical_id      # 3
+  - fields            # 4
+  - enums             # 5
+  - tools             # 6
+  - events            # 7
+  - derived_emitter   # 8
+  - permission_scope  # 9
+  - audit_resource_type # 10
+  - data_sources      # 11
+  - examples          # 12
+  - business_rules    # 13
+  - failure_modes     # 14
+  - related_tools     # 15
+  - ui_bindings       # 16
+  - zod_schema        # 17
+  - prisma_model      # 18
+  - test_fixtures     # 19
+
+optional_layers:
+  - llm_prompt_refs       # AI prompts that cite this resource by name
+  - realtime_channels     # Background-job queue / channel names
+  - notification_templates # Email / chat / webhook template names
+
+# ---------------------------------------------------------------------------
+# Layer specifications
+# ---------------------------------------------------------------------------
+
+layer_specs:
+
+  resource:
+    type: string
+    pattern: '^[a-z][a-z0-9_]*$'   # snake_case
+    description: >
+      Canonical resource name. Matches the filename without extension.
+      Singular noun where possible.
+
+  kind:
+    type: enum
+    values:
+      - table           # row-bearing entity persisted in the primary store
+      - view            # read-only projection
+      - report          # aggregate output assembled at request time
+      - service         # compute-only, no rows persisted
+      - external_table  # mirror of a third-party shape
+      - enum_owner      # owns an enum referenced elsewhere
+    description: >
+      Determines codegen targets. `table` -> ORM model + Zod schema.
+      `view`/`report` -> read-only Zod schema, no ORM model.
+      `external_table` -> Zod schema + connector mapping fixture.
+      `enum_owner` -> see lexicon/enums/<enum>.yml; this kind is rarely used here.
+
+  canonical_id:
+    type: string
+    description: >
+      Field that uniquely identifies a row.
+      Reports + services may declare `canonical_id: null`.
+
+  fields:
+    type: list_of_objects
+    item_shape:
+      name: string                  # snake_case at DB; codegen camelCase in TS
+      type: enum                    # logical type (see logical_types below)
+      db_type: string               # DB-native type (incl. extensions where relevant)
+      nullable: boolean
+      description: string
+      enum_ref: string?             # if `type: enum`, name of enum yml
+      default: any?                 # default value (literal or `now()` etc.)
+      indexed: boolean?             # whether to add an index
+      unique: boolean?              # whether to add a unique constraint
+    logical_types:
+      - string
+      - text                        # long text
+      - integer                     # 32-bit
+      - bigint                      # 64-bit
+      - decimal                     # high-precision numeric
+      - boolean
+      - timestamp                   # ISO 8601 in API + lexicon
+      - date
+      - uuid
+      - enum
+      - json                        # flexible blob
+      - geography                   # spatial type (PostGIS or equivalent)
+      - bytes
+
+  enums:
+    type: list_of_strings
+    description: >
+      Names of enum yml files this resource binds (without extension).
+
+  tools:
+    type: list_of_objects
+    item_shape:
+      name: string                  # PascalCase, verb-prefixed
+      verb: string                  # one of the whitelist verbs
+      canonical_create: boolean?    # exactly one tool per resource may be true
+      inputs: object                # Zod-shape spec for inputs
+      outputs: object               # Zod-shape spec for outputs
+      side_effects:                 # what changes outside the function return
+        - string
+      description: string
+    rules:
+      - At most one tool per resource may declare `canonical_create: true`.
+      - Sheet name derives from canonical_create verb (see naming-lexicon rule).
+      - Verb must match docs/agents/00-NAMING-CONVENTIONS.md.
+
+  events:
+    type: list_of_objects
+    item_shape:
+      name: string                  # PascalCase past-tense
+      payload_shape: object         # Zod-shape
+      triggers:
+        - string                    # tool names that emit this event
+
+  derived_emitter:
+    type: object
+    description: >
+      Tool -> event mapping. CI verifies every tool either has an emitter
+      entry or declares `emits: []` explicitly. No silent gaps.
+    shape:
+      <tool_name>:
+        emits: [string]             # event names; may be empty list
+
+  permission_scope:
+    type: enum
+    values:
+      - user_self                   # MVP single-tenant: row-owner only
+      - tenant                      # future multi-tenant: tenant scope
+      - service_only                # internal worker / system-only
+      - public                      # public read
+
+  audit_resource_type:
+    type: string
+    description: >
+      String written to AuditLog.resource_type for events on this resource.
+      Convention: same as `resource` (snake_case singular).
+
+  data_sources:
+    type: list_of_strings
+    description: >
+      Which connectors / paths populate rows of this resource.
+      Examples: `manual_import`, `csv_import`, `<provider>_connector`,
+      `email_alert_parser`, `internal_compute`.
+
+  examples:
+    type: list_of_objects
+    item_shape:
+      name: string                  # short label
+      narrative: string             # one-paragraph context
+      record: object                # full JSON, lexicon-shaped
+    rules:
+      - At least 1 example for `gold` resources.
+      - At least 3 examples for cross-cutting resources.
+      - Examples MUST validate against the resource's Zod schema once codegen is wired.
+
+  business_rules:
+    type: list_of_strings
+    description: >
+      Domain rules not expressible as type constraints. Each rule
+      reads as one declarative sentence. Numbered for cross-reference
+      from agent files and prompts.
+
+  failure_modes:
+    type: list_of_objects
+    item_shape:
+      mode: string                  # short label
+      detection: string             # signal that flags this failure
+      recovery: string              # what to do; may include 'create Task'
+      severity: string              # one of the project's severity enum
+
+  related_tools:
+    type: list_of_strings
+    description: >
+      Sequencing hints. Free-form ordered list of tool names that typically
+      follow each other when working with this resource.
+
+  ui_bindings:
+    type: list_of_objects
+    item_shape:
+      component: string             # PascalCase component file path
+      page: string?                 # which page renders the component
+      role: string                  # 'sheet' | 'card' | 'badge' | 'detail' | 'table_row' | 'filter'
+
+  zod_schema:
+    type: string                    # PascalCase + Schema suffix
+    description: Codegen target name.
+
+  prisma_model:
+    type: string?                   # null for `kind: report` / `service`
+    description: Codegen target name (or ORM-equivalent for non-Prisma stacks).
+
+  test_fixtures:
+    type: list_of_strings
+    description: >
+      Paths (relative to repo root) of fixture files used by unit + integration
+      tests. Each path corresponds to one example record where possible.
+
+  llm_prompt_refs:
+    type: list_of_strings
+    description: >
+      Names of AI prompts that cite this resource. Used by reviewers to spot
+      prompts that reference a resource whose schema has changed.
+
+  realtime_channels:
+    type: list_of_strings
+    description: >
+      Background-job queue / job names (kebab-case) that touch this resource.
+
+  notification_templates:
+    type: list_of_strings
+    description: >
+      Email / chat / webhook template names referencing this resource.
+
+# ---------------------------------------------------------------------------
+# Status field (every resource yml declares one)
+# ---------------------------------------------------------------------------
+
+status:
+  type: enum
+  values:
+    - gold              # all 19 layers fully populated; passes CI lexicon-check
+    - draft             # most layers populated; safe to codegen but not production-binding
+    - scaffold_stub     # placeholder; named owner-agent must flesh out before use
+  description: >
+    `gold` resources are CI-enforced. `draft` resources allow placeholders in
+    optional layers. `scaffold_stub` resources fail `pnpm lexicon:check` if any
+    code references them — they exist to reserve the name only.
+
+# ---------------------------------------------------------------------------
+# Codegen pipeline contract
+# ---------------------------------------------------------------------------
+
+codegen:
+  inputs:
+    - lexicon/resources/*.yml
+    - lexicon/enums/*.yml
+  outputs:
+    - lib/lexicon/types.ts            # TS types for every resource + enum
+    - lib/lexicon/zod.ts              # Zod schemas matching types.ts
+    - lib/lexicon/enums.ts            # TS enum exports
+    - lib/lexicon/manifest.ts         # registry of all resources + their tools / events
+    - prisma/schema.prisma            # full schema regenerated from lexicon (or ORM-equivalent)
+  rules:
+    - Codegen is idempotent. Re-running on unchanged input produces byte-identical output.
+    - Codegen is one-way. Editing generated TS / ORM manually is forbidden — change the yml.
+    - The CI gate `pnpm lexicon:check` (or equivalent) fails if generated files are out of sync with yml.
+
+# ---------------------------------------------------------------------------
+# Schema evolution
+# ---------------------------------------------------------------------------
+
+evolution:
+  - Adding an optional layer requires schema_version bump + migration note in lexicon/resources/README.md.
+  - Removing or renaming a required layer requires a Drift Register entry + a schema_version major bump.
+  - Adding a new logical type or kind requires owner sign-off + Drift Register entry.

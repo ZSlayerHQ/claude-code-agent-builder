@@ -1,0 +1,51 @@
+# Project Skills
+
+This directory holds **project-local Claude Code skills** — focused, reusable prompts the AI can invoke via `/<skill-name>` or load automatically based on conversational context.
+
+Skills complement the agent roster (`.claude/agents/`). The dividing line:
+
+| Use a **skill** when... | Use an **agent** when... |
+|---|---|
+| The work is a recipe / procedure with a fixed shape | The work needs its own context window + tool scoping |
+| Multiple agents (or the main thread) all need it | One domain owns the work end-to-end |
+| It's a small reusable workflow (≤200 lines of instructions) | It's a full role with handoffs + verification |
+| Activation is contextual or by slash command | Activation is by delegation from the orchestrator |
+
+Examples of good skills:
+- A **commit message** skill that enforces the project's commit conventions
+- A **bug-report triage** skill that runs the same diagnostic ladder every time
+- A **PR review** skill that loads the project's review rubric
+- A **migration checklist** skill that's used before any DB schema change
+
+## Authoring a new skill
+
+The fastest path is the `skill-creator` plugin (pre-enabled in `.claude/settings.json`). Ask the AI: "Create a skill that does X" — it'll walk through naming, description (the activation hook), and body structure.
+
+Manual path: copy `_example/SKILL.md` into a new subdirectory (`<skill-name>/SKILL.md`), then edit the frontmatter + body.
+
+## File layout
+
+```
+.claude/skills/
+  README.md                  ← you are here
+  _example/
+    SKILL.md                 ← starter template; delete or rename
+  <your-skill-name>/
+    SKILL.md                 ← canonical filename (required)
+    references/              ← optional supporting docs the skill can read
+```
+
+The `SKILL.md` filename is mandatory — Claude Code looks for that exact name inside each skill directory.
+
+## Activation
+
+Two activation modes:
+
+1. **Manual** — operator types `/skill-name` to invoke directly
+2. **Automatic** — Claude reads each skill's `description` frontmatter and decides on its own whether to load + apply
+
+The `description` field is therefore load-bearing. Write it as "Use this skill when..." — the more specific the trigger, the better the activation precision. See `_example/SKILL.md` for the format.
+
+## Shell execution inside skills
+
+Skills can include inline shell execution via `` !`<command>` `` blocks. Useful for "gather context before answering" patterns (e.g. `` !`git log --oneline -10` ``). To disable shell execution globally, set `disableSkillShellExecution: true` in `.claude/settings.json` — recommended for environments where the operator shouldn't be able to bypass the deny list via skill execution.

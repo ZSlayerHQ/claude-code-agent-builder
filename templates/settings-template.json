@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "model": "claude-opus-4-7",
+  "effortLevel": "xhigh",
+  "env": {
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "64000",
+    "ENABLE_PROMPT_CACHING_1H": "1"
+  },
+  "permissions": {
+    "defaultMode": "bypassPermissions",
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(git push * --force*)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean -f*)",
+      "Bash(rm -rf *)",
+      "Bash(*--no-verify*)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)"
+    ]
+  },
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "code-review@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true,
+    "frontend-design@claude-code-plugins": true,
+    "context-mode@context-mode": true,
+    "skill-creator@claude-plugins-official": true
+  },
+  "hooks": {
+    "PreCompact": [
+      {
+        "matcher": "manual",
+        "hooks": [{
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/pre-compact-state-write.mjs"
+        }]
+      },
+      {
+        "matcher": "auto",
+        "hooks": [{
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/pre-compact-state-write.mjs"
+        }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "WebFetch|WebSearch|mcp__.*__(fetch|get|stealthy_fetch|bulk_stealthy_fetch|crawl|search)",
+        "hooks": [{
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/prompt-injection-scan.mjs"
+        }]
+      }
+    ]
+  },
+  "autoUpdatesChannel": "latest",
+  "skipDangerousModePermissionPrompt": true,
+  "verbose": true
+}
