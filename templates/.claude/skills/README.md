@@ -34,6 +34,8 @@ Manual path: copy `_example/SKILL.md` into a new subdirectory (`<skill-name>/SKI
     SKILL.md                 ← ships by default — 6-check documentation rot scan
   post-compact-reload/
     SKILL.md                 ← ships by default — re-reads core docs after /compact
+  session-end-update/
+    SKILL.md                 ← ships by default — persists session-docs at session end
   <your-skill-name>/
     SKILL.md                 ← canonical filename (required)
     references/              ← optional supporting docs the skill can read
@@ -47,6 +49,7 @@ The `SKILL.md` filename is mandatory — Claude Code looks for that exact name i
 |---|---|---|
 | `stale-docs-audit` | "audit the docs" / "are the docs current?" / `/stale-docs-audit` | 6-check scan: dead file-path citations, version mismatch, dead SHAs, last-modified gap, TODO/FIXME markers, renamed-file ghosts. Produces a structured RED/AMBER/GREEN report. |
 | `post-compact-reload` | "/post-compact-reload" / "re-read the rules" / proactively after `/compact` | Re-reads core documents (`CLAUDE.md`, `~/.claude/CLAUDE.md`, `session-docs/STATE.md`, `GOTCHAS.md`, `PROJECT-DETAILS.md`, every `.claude/rules/*.md`) after `/compact` runs. Without it, long sessions drift away from current rule files because auto-load only fires at session start. Customise the project-specific section in the SKILL.md body. |
+| `session-end-update` | "/session-end-update" / "we're done" / "calling it" / "wrap the session" / "end of day" | Persist-side analog to `post-compact-reload`. Captures what changed at session end + updates STATE.md narrative + appends SESSION-LOG entry + adds new DECISIONS / GOTCHAS entries if applicable + offers a `chore(session): wrap session YYYY-MM-DD` commit. Scoped strictly to `session-docs/`. |
 | `codex-dispatch` *(optional)* | "run codex" / "verify with codex" | Independent static-analysis verifier via OpenAI Codex CLI for medium-to-large changes. Only ships if the operator confirmed Codex CLI is installed at project generation time. |
 
 ## Activation
