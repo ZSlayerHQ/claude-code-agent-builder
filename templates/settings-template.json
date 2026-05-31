@@ -53,6 +53,23 @@
           "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/prompt-injection-scan.mjs"
         }]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/pre-edit-gotcha-check.mjs"
+        }]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [{
+          "type": "command",
+          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/user-prompt-gotcha-dedup-reset.mjs"
+        }]
+      }
     ]
   },
   "autoUpdatesChannel": "latest",
