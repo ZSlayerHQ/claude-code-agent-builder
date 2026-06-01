@@ -2,7 +2,7 @@
 name: "{Domain} Reviewer"
 description: "{One-sentence description of what this reviewer evaluates}"
 invocation: "{When to invoke this agent — concrete trigger conditions}"
-model: claude-opus-4-7
+model: claude-opus-4-8
 effort: xhigh
 tools: [Read, Grep, Glob, Bash, GitNexus]
 ---

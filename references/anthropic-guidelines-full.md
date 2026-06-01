@@ -1,16 +1,16 @@
 # Anthropic Guidelines Reference
 
-A deep reference for Claude Code sessions running Claude Opus 4.7 at xhigh effort. Grounded in Anthropic's official documentation as of May 2026 (updated from April 2026 baseline).
+A deep reference for Claude Code sessions running Claude Opus 4.8 at xhigh effort. Grounded in Anthropic's official documentation as of May 2026 (updated from April 2026 baseline).
 
 ---
 
 ## 1. Model Overview
 
-### Current Models (Claude 4.7 generation, May 2026)
+### Current Models (Claude 4.8 generation, May 2026)
 
-| | Opus 4.7 | Sonnet 4.6 | Haiku 4.5 |
+| | Opus 4.8 | Sonnet 4.6 | Haiku 4.5 |
 |---|---|---|---|
-| **Model ID** | `claude-opus-4-7` | `claude-sonnet-4-6` | `claude-haiku-4-5-20251001` |
+| **Model ID** | `claude-opus-4-8` | `claude-sonnet-4-6` | `claude-haiku-4-5-20251001` |
 | **Best for** | Hardest tasks, long-horizon agents, deep reasoning | Balance of speed and intelligence | High-volume, latency-sensitive |
 | **Context window** | 1M tokens | 1M tokens | 200K tokens |
 | **Max output** | 128K tokens | 64K tokens | 64K tokens |
@@ -22,7 +22,7 @@ A deep reference for Claude Code sessions running Claude Opus 4.7 at xhigh effor
 
 ### When to Use Each
 
-- **Opus 4.7**: Large-scale code migrations, deep research, extended autonomous work, multi-step reasoning that spans many tool calls, agentic Claude Code sessions. Default for builders. Use when accuracy matters more than speed.
+- **Opus 4.8**: Large-scale code migrations, deep research, extended autonomous work, multi-step reasoning that spans many tool calls, agentic Claude Code sessions. Default for builders. Use when accuracy matters more than speed.
 - **Sonnet 4.6**: Most everyday coding, agent workflows where fast turnaround and cost matter. Set effort to `medium` for most applications, `low` for high-volume workloads.
 - **Haiku 4.5**: Codebase exploration (Claude Code's built-in Explore subagent uses it), classification, simple lookups, cost-conscious bulk operations, latency-critical hot paths (sub-2s LLM calls).
 
@@ -30,18 +30,18 @@ A deep reference for Claude Code sessions running Claude Opus 4.7 at xhigh effor
 
 `low` / `medium` / `high` / **`xhigh`** (new in May 2026 — Anthropic's recommended default for coding/agentic Claude Code use cases). Effort parameter is GA — drop the legacy `effort-2025-11-24` beta header.
 
-### Key 4.7 Changes from 4.6
+### Key 4.7+ Changes from 4.6
 
-**Breaking changes (Opus 4.7 + back-ported to Sonnet 4.6):**
-- **Prefill on last turn returns 400.** Prefilled assistant messages on the last turn now error out — was deprecated on Opus 4.6, hard-removed on 4.7 + retroactively on Sonnet 4.6. Use structured outputs or system prompt instructions.
-- **Sampling parameters removed**: `temperature`, `top_p`, `top_k` are removed on Opus 4.7. Adaptive thinking + effort levels replace them.
+**Breaking changes (Opus 4.8 + back-ported to Sonnet 4.6):**
+- **Prefill on last turn returns 400.** Prefilled assistant messages on the last turn now error out — was deprecated on Opus 4.6, hard-removed on 4.7+ + retroactively on Sonnet 4.6. Use structured outputs or system prompt instructions.
+- **Sampling parameters removed**: `temperature`, `top_p`, `top_k` are removed on Opus 4.8. Adaptive thinking + effort levels replace them.
 - **`budget_tokens` removed for extended thinking** — use adaptive thinking via `thinking: {type: "adaptive"}` parameter.
 - **Thinking content omitted by default** — must opt in to receive thinking blocks in responses.
-- **Adaptive thinking is OFF by default** on Opus 4.7 — must set `thinking: {type: "adaptive"}` explicitly when you want it.
+- **Adaptive thinking is OFF by default** on Opus 4.8 — must set `thinking: {type: "adaptive"}` explicitly when you want it.
 
-**New in 4.7:**
+**New in 4.7+:**
 - **`xhigh` effort level** — recommended default for Claude Code / agentic use cases. GA — no beta header needed.
-- **Subagent over-delegation reversal**: 4.6 spawned subagents aggressively; **4.7 spawns FEWER subagents by default**. Agent files should give POSITIVE delegation triggers ("Delegate to X when…") not warnings against over-delegation.
+- **Subagent over-delegation reversal**: 4.6 spawned subagents aggressively; **4.7+ spawns FEWER subagents by default**. Agent files should give POSITIVE delegation triggers ("Delegate to X when…") not warnings against over-delegation.
 - **Higher-resolution image input (2576px)** with 1:1 pixel coordinates — useful for scanned legal docs, OCR pipelines.
 - **More literal at low/medium effort** — must state scope explicitly. Example: "apply to every clause" not "apply to the clause."
 - **New tokenizer** — same input uses 1.0–1.35x more tokens than 4.6.
@@ -102,7 +102,7 @@ Anthropic suggests: if a task requires exploring 10+ files, or involves 3+ indep
 - **Grounding in quotes**: For long documents, ask Claude to quote relevant parts before answering. This cuts through noise.
 - **Self-checking**: Append "Before you finish, verify your answer against [criteria]." This catches errors reliably for coding and math.
 
-### What Changed in 4.6 → 4.7
+### What Changed in 4.6 → 4.7+
 
 **Carried over from 4.6 (still apply):**
 - **Dial back anti-laziness prompting**: Instructions that were needed to push previous models ("CRITICAL: You MUST use this tool") cause overtriggering on Opus 4.6+. Use normal language: "Use this tool when..."
@@ -110,12 +110,12 @@ Anthropic suggests: if a task requires exploring 10+ files, or involves 3+ indep
 - **More concise by default**: Claude 4.6+ provides fact-based progress reports, not self-celebratory updates. If you want summaries after tool use, ask for them explicitly.
 - **LaTeX default for math**: Add explicit plain-text instructions if you do not want LaTeX output.
 
-**New in 4.7:**
-- **State scope explicitly at low/medium effort.** 4.7 is more literal than 4.6. "Apply this rule to every clause in the contract" is safer than "Apply this rule to the clause." At `xhigh` effort the model fills gaps better, but explicit scope is still safest.
-- **Positive delegation triggers, not over-delegation warnings.** 4.6 over-spawned subagents; 4.7 under-spawns. Agent files should say "Delegate to [agent] when [condition]" (positive) rather than "Avoid over-delegating to [agent]" (negative).
+**New in 4.7+:**
+- **State scope explicitly at low/medium effort.** 4.7+ is more literal than 4.6. "Apply this rule to every clause in the contract" is safer than "Apply this rule to the clause." At `xhigh` effort the model fills gaps better, but explicit scope is still safest.
+- **Positive delegation triggers, not over-delegation warnings.** 4.6 over-spawned subagents; 4.7+ under-spawns. Agent files should say "Delegate to [agent] when [condition]" (positive) rather than "Avoid over-delegating to [agent]" (negative).
 - **No prefill workarounds.** Prefill on last turn returns 400. Use structured outputs or system prompt directives instead.
-- **No sampling-parameter scaffolding.** Don't reach for `temperature`/`top_p`/`top_k` — they're removed on 4.7.
-- **Adaptive thinking is opt-in.** If you need extended reasoning, set `thinking: {type: "adaptive"}` explicitly. Otherwise 4.7 won't think before responding.
+- **No sampling-parameter scaffolding.** Don't reach for `temperature`/`top_p`/`top_k` — they're removed on 4.7+.
+- **Adaptive thinking is opt-in.** If you need extended reasoning, set `thinking: {type: "adaptive"}` explicitly. Otherwise 4.7+ won't think before responding.
 
 ---
 
@@ -211,22 +211,22 @@ Subagents are Markdown files with YAML frontmatter stored in:
 
 **Optional frontmatter fields**: `tools`, `disallowedTools`, `model`, `permissionMode`, `mcpServers`, `hooks`, `maxTurns`, `skills`, `memory`, `effort`, `isolation`, `color`.
 
-**Recommended for builders in 4.7**: `model: claude-opus-4-7`, `effort: xhigh`. For latency-critical hot paths: `model: claude-haiku-4-5-20251001`, `effort: medium`.
+**Recommended for builders in 4.7+**: `model: claude-opus-4-8`, `effort: xhigh`. For latency-critical hot paths: `model: claude-haiku-4-5-20251001`, `effort: medium`.
 
 ### Isolation and Context
 
 Each subagent runs in its own context window. This is the primary benefit: exploration and implementation stay out of your main conversation. Subagents cannot spawn other subagents (prevents infinite nesting).
 
-### Watch for Underuse (4.7) — REVERSAL from 4.6
+### Watch for Underuse (4.7+) — REVERSAL from 4.6
 
-**Opus 4.7 spawns FEWER subagents by default than 4.6 did.** The previous 4.6 advice ("watch for overuse") is reversed in 4.7 — now the risk is *underuse* of available subagents.
+**Opus 4.8 spawns FEWER subagents by default than 4.6 did.** The previous 4.6 advice ("watch for overuse") is reversed in 4.7+ — now the risk is *underuse* of available subagents.
 
-For 4.7, give **positive delegation triggers** in agent files and CLAUDE.md:
+For 4.7+, give **positive delegation triggers** in agent files and CLAUDE.md:
 - "Delegate to the Explore subagent when researching unfamiliar code across 3+ files."
 - "Delegate to the Code Reviewer agent after every feature implementation."
 - "Use the Researcher agent for any third-party library evaluation."
 
-Do NOT add 4.6-style negative warnings ("avoid over-delegating") — they push 4.7 even further into under-delegation.
+Do NOT add 4.6-style negative warnings ("avoid over-delegating") — they push 4.7+ even further into under-delegation.
 
 **Historical note (still relevant if running on Opus 4.6 sessions):** if you see a 4.6 session over-spawning subagents, add: "Use subagents when tasks can run in parallel, require isolated context, or involve independent workstreams. For simple tasks, single-file edits, or sequential operations, work directly."
 

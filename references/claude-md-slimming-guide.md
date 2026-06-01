@@ -10,7 +10,7 @@ This guide codifies the token-frugality principles applied during the May 2026 s
 
 ### 1. Don't restate Anthropic policy
 
-**Rule:** If a behaviour is already baked into Claude Opus 4.7's system prompt (refusal of harmful requests, OSS-licence respect, secrets handling, copyright caution), do NOT restate it in CLAUDE.md.
+**Rule:** If a behaviour is already baked into Claude Opus 4.8's system prompt (refusal of harmful requests, OSS-licence respect, secrets handling, copyright caution), do NOT restate it in CLAUDE.md.
 
 **Why:** Anthropic ships these rules at the model level. CLAUDE.md restatements buy nothing except token cost on every turn. The model's compliance ceiling is set by Constitutional AI, not by your prose.
 
@@ -41,7 +41,7 @@ This guide codifies the token-frugality principles applied during the May 2026 s
 **Bad → Good:**
 - "Never speculate about unread files" → "Read the cited file before answering questions about it"
 - "Don't add unnecessary abstractions" → "Match implementation complexity to the task's scope"
-- "Avoid over-delegating to subagents" → "Delegate to subagents when work involves 3+ independent workstreams or 10+ file reads" (this also addresses Opus 4.7's under-spawn risk per §6)
+- "Avoid over-delegating to subagents" → "Delegate to subagents when work involves 3+ independent workstreams or 10+ file reads" (this also addresses Opus 4.8's under-spawn risk per §6)
 
 ### 4. Explain WHY, not just WHAT
 
@@ -71,17 +71,17 @@ This guide codifies the token-frugality principles applied during the May 2026 s
 
 **Test:** For every section ≥3 lines, ask: "If I delete this, what concrete behaviour would change?" If the answer is "nothing the model wouldn't do anyway," delete it.
 
-### 7. State scope explicitly (Opus 4.7-specific)
+### 7. State scope explicitly (Opus 4.8-specific)
 
-**Rule:** When a rule has a scope ("apply this to every file in X"), say *every* — Opus 4.7 is more literal than 4.6.
+**Rule:** When a rule has a scope ("apply this to every file in X"), say *every* — Opus 4.8 is more literal than 4.6.
 
-**Why (Anthropic §3):** 4.7 reads "the clause" as singular when 4.6 would have inferred "all clauses." At `effort: xhigh` the gap narrows but doesn't close. Explicit scope is always safe; ambiguous scope is sometimes wrong.
+**Why (Anthropic §3):** 4.7+ reads "the clause" as singular when 4.6 would have inferred "all clauses." At `effort: xhigh` the gap narrows but doesn't close. Explicit scope is always safe; ambiguous scope is sometimes wrong.
 
-### 8. Use positive delegation triggers (Opus 4.7-specific)
+### 8. Use positive delegation triggers (Opus 4.8-specific)
 
 **Rule:** In CLAUDE.md sections that describe agent / subagent delegation, write "Delegate to {agent} when {condition}" — not "Avoid over-delegating to {agent}."
 
-**Why (Anthropic §6):** 4.7 under-spawns subagents by default (reversed from 4.6's over-spawn behaviour). Negative framings push the model further from the desired behaviour. Positive triggers calibrate it correctly.
+**Why (Anthropic §6):** 4.7+ under-spawns subagents by default (reversed from 4.6's over-spawn behaviour). Negative framings push the model further from the desired behaviour. Positive triggers calibrate it correctly.
 
 ### 9. Action vs suggestion clarity
 
@@ -113,7 +113,7 @@ Above the hard cap = audit + trim. The act of trimming surfaces dead prose every
 
 ### Token cost reality check
 
-A 150-line CLAUDE.md is roughly 1500-2500 tokens (Opus 4.7 tokenizer is 1.0-1.35× heavier than 4.6 — see `anthropic-guidelines-full.md` §1). That cost is paid:
+A 150-line CLAUDE.md is roughly 1500-2500 tokens (Opus 4.8 tokenizer is 1.0-1.35× heavier than 4.6 — see `anthropic-guidelines-full.md` §1). That cost is paid:
 - On every Session Start
 - On every PostCompact rehydration
 - Quietly when the cache TTL expires (default 5min; agent-builder-generated projects override to 1h via `ENABLE_PROMPT_CACHING_1H=1`)
@@ -170,4 +170,4 @@ Run when authoring or reviewing a CLAUDE.md / settings.json:
 **After:**
 "Delegate to the researcher agent when (a) the task requires reading 5+ external sources, (b) the operator explicitly asks for research, or (c) the question crosses 3+ independent territories that benefit from parallel investigation."
 
-The rewrite calibrates Opus 4.7 correctly (positive trigger) AND explains why (parallel work, multi-source, explicit ask) so the model can judge edge cases.
+The rewrite calibrates Opus 4.8 correctly (positive trigger) AND explains why (parallel work, multi-source, explicit ask) so the model can judge edge cases.

@@ -5,7 +5,7 @@ description: Dispatch OpenAI Codex CLI for independent static-analysis verificat
 
 # Codex Dispatch
 
-OpenAI Codex CLI is the static-side independent verifier in this project's quality workflow. Different model (gpt-5.5) catches errors Claude (Opus 4.7) misses by construction — orthogonal training data, different reasoning style.
+OpenAI Codex CLI is the static-side independent verifier in this project's quality workflow. Different model (gpt-5.5) catches errors Claude (Opus 4.8) misses by construction — orthogonal training data, different reasoning style.
 
 > **Prerequisite:** Codex CLI installed + configured. Typical install paths:
 > - Windows: `C:\Users\<user>\AppData\Roaming\npm\codex.cmd`
@@ -42,7 +42,7 @@ Recommended `~/.codex/config.toml` for production-grade cluster verification:
 | Setting | Value | Rationale |
 |---|---|---|
 | `model` | `gpt-5.5` | Latest OpenAI flagship as of mid-2026 |
-| `model_reasoning_effort` | `xhigh` | Highest reasoning depth — matches Claude Opus 4.7's xhigh |
+| `model_reasoning_effort` | `xhigh` | Highest reasoning depth — matches Claude Opus 4.8's xhigh |
 | `model_context_window` | `800000` | 800k tokens — fits a large cluster's full codebase context |
 | `model_auto_compact_token_limit` | `700000` | Auto-compact 100k before window cap |
 | `approval_policy` | `never` | Run autonomously — no interactive approvals |

@@ -2,7 +2,7 @@
 name: "{Domain} Builder"
 description: "{One-sentence description of what this builder creates/modifies}"
 invocation: "{When to invoke this agent — concrete trigger conditions}"
-model: claude-opus-4-7
+model: claude-opus-4-8
 effort: xhigh
 tools: [Read, Write, Edit, Bash, Context7]
 ---
@@ -48,7 +48,7 @@ Delegate to this agent when:
 - **Test alongside implementation.** Write or update tests for every functional change. Never defer testing to a separate step.
 - **Small, verifiable changes.** Implement in increments that can be tested independently. Commit at natural breakpoints.
 - **Error handling from the start.** Handle failure paths during initial implementation, not as an afterthought. Validate inputs at boundaries.
-- **Adaptive thinking opt-in.** When generating runtime code that calls Claude (Opus 4.7 / Sonnet 4.6), opt in to adaptive thinking for high-stakes calls (planning, multi-step reasoning, structured generation) via `thinking: {type: "adaptive"}`. Leave it off for parsing / classification / hot paths. Default is OFF on 4.7.
+- **Adaptive thinking opt-in.** When generating runtime code that calls Claude (Opus 4.8 / Sonnet 4.6), opt in to adaptive thinking for high-stakes calls (planning, multi-step reasoning, structured generation) via `thinking: {type: "adaptive"}`. Leave it off for parsing / classification / hot paths. Default is OFF on 4.8.
 {domain-specific patterns — the builder adds 3-5 patterns specific to the target domain here}
 
 ## Output Format

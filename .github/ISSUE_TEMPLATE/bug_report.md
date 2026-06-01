@@ -39,7 +39,7 @@ What happened instead. Include exact error text if applicable. Wrap stack traces
 - Claude Code version: <output of `claude --version`>
 - OS: <Windows / macOS / Linux + version>
 - Shell: <PowerShell / bash / zsh + version>
-- Claude model used: <opus-4-7 / sonnet-4-6 / haiku-4-5 / other>
+- Claude model used: <opus-4-8 / sonnet-4-6 / haiku-4-5 / other>
 
 ## Additional context
 

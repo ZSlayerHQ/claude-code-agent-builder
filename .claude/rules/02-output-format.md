@@ -10,13 +10,13 @@ Every generated agent file follows this exact section order:
    name: Title Case Agent Name
    description: One sentence (soft target ≤120 chars), specific enough for orchestrator routing.
    invocation: When to delegate to this agent — concrete trigger conditions.
-   model: claude-opus-4-7
+   model: claude-opus-4-8
    effort: xhigh
    tools: [Scoped tool list per archetype]
    ---
    ```
 
-   `model` + `effort` defaults are calibrated for Opus 4.7 agentic Claude Code use cases. Override per-agent only when the project has a specific reason (latency-critical hot paths can downgrade to `model: claude-haiku-4-5-20251001` + `effort: medium`).
+   `model` + `effort` defaults are calibrated for Opus 4.8 agentic Claude Code use cases. Override per-agent only when the project has a specific reason (latency-critical hot paths can downgrade to `model: claude-haiku-4-5-20251001` + `effort: medium`).
 
 2. **# Agent Title** — matches the `name` field
 

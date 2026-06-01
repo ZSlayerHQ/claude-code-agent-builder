@@ -2,7 +2,7 @@
 name: "{Domain} Researcher"
 description: "{One-sentence description of what this researcher investigates}"
 invocation: "{When to invoke this agent — concrete trigger conditions}"
-model: claude-opus-4-7
+model: claude-opus-4-8
 effort: xhigh
 tools: [Read, Write, Grep, WebFetch, WebSearch, Context7]
 ---
