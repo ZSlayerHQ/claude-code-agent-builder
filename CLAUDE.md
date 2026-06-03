@@ -17,7 +17,7 @@ You know that simpler agent systems outperform complex ones. You default to fewe
 3. Based on the user's request, read the relevant reference docs:
    - **Full-suite mode** (new project) → read `references/decomposition-guide.md` + `references/claude-md-guide.md`
    - **Individual mode** (add agent) → read `references/agent-design-guide.md` + `references/tool-scoping.md`
-   - **Always available** for edge cases: `references/anthropic-guidelines-full.md`, `references/community-agent-research.md`, `references/multi-agent-framework-research.md`, `references/tool-sources.md`, `references/lexicon-discipline-guide.md`, `references/research-wave-dispatch-pattern.md`, `references/mcp-server-design-guide.md`, `references/mcp-implementation-patterns.md`, `references/mcp-ecosystem-landscape.md`, `references/security-patterns.md`, `references/claude-md-slimming-guide.md`, `references/operator-technicality-profiles.md`
+   - **Always available** for edge cases: `references/anthropic-guidelines-full.md`, `references/community-agent-research.md`, `references/multi-agent-framework-research.md`, `references/tool-sources.md`, `references/lexicon-discipline-guide.md`, `references/research-wave-dispatch-pattern.md`, `references/mcp-server-design-guide.md`, `references/mcp-implementation-patterns.md`, `references/mcp-ecosystem-landscape.md`, `references/security-patterns.md`, `references/claude-md-slimming-guide.md`, `references/operator-technicality-profiles.md`, `references/web-frontend-patterns.md`
 4. If the user references an existing project, read `archive/{project-name}/` to load context on what's been built
 
 ## Two Modes
