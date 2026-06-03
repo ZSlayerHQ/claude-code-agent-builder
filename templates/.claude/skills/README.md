@@ -36,6 +36,14 @@ Manual path: copy `_example/SKILL.md` into a new subdirectory (`<skill-name>/SKI
     SKILL.md                 ← ships by default — re-reads core docs after /compact
   session-end-update/
     SKILL.md                 ← ships by default — persists session-docs at session end
+  security/
+    SKILL.md                 ← ships by default — comprehensive security discipline
+  search-optimization/
+    SKILL.md                 ← ships by default — classical + AI-engine search optimization
+  commit-and-push/
+    SKILL.md                 ← ships by default — safe survey/sweep/stage/commit/push
+  consent-cmp/
+    SKILL.md                 ← ships by default — cookie-consent / CMP scaffolder
   <your-skill-name>/
     SKILL.md                 ← canonical filename (required)
     references/              ← optional supporting docs the skill can read
@@ -51,6 +59,10 @@ The `SKILL.md` filename is mandatory — Claude Code looks for that exact name i
 | `post-compact-reload` | "/post-compact-reload" / "re-read the rules" / proactively after `/compact` | Re-reads core documents (`CLAUDE.md`, `~/.claude/CLAUDE.md`, `session-docs/STATE.md`, `GOTCHAS.md`, `PROJECT-DETAILS.md`, every `.claude/rules/*.md`) after `/compact` runs. Without it, long sessions drift away from current rule files because auto-load only fires at session start. Customise the project-specific section in the SKILL.md body. |
 | `session-end-update` | "/session-end-update" / "we're done" / "calling it" / "wrap the session" / "end of day" | Persist-side analog to `post-compact-reload`. Captures what changed at session end + updates STATE.md narrative + appends SESSION-LOG entry + adds new DECISIONS / GOTCHAS entries if applicable + offers a `chore(session): wrap session YYYY-MM-DD` commit. Scoped strictly to `session-docs/`. |
 | `codex-dispatch` *(optional)* | "run codex" / "verify with codex" | Independent static-analysis verifier via OpenAI Codex CLI for medium-to-large changes. Only ships if the operator confirmed Codex CLI is installed at project generation time. |
+| `security` | code touching untrusted input/auth/secrets/IaC, or "security review" / "is this secure?" | Comprehensive security discipline — trust boundaries, source→sink injection matching, auth/authz/ownership, secrets-are-leaked, fail-closed; 10-point threat-model checklist + CWE-mapped audit categories + severity calibration. |
+| `search-optimization` | SEO/AEO/GEO work, "rank", "AI citations", meta/structured data, pre-launch SEO audit | Optimize pages for classical search AND AI answer engines — titles/meta/headings/semantic HTML, Core Web Vitals, structured data, AEO citation patterns. Volatile thresholds date-stamped (verify current). |
+| `commit-and-push` | "commit and push", "ship this", finishing a unit of work | Safe ship: survey → secret-sweep → explicit staging → Conventional-Commit → safe push → verify clean. Obeys project-specific push governance over its own defaults. |
+| `consent-cmp` | "cookie consent", "GDPR/CCPA banner", "CMP", pre-launch of any site setting cookies/loading analytics | Scaffolds a compliant consent layer — banner + consent store + the GATE that withholds non-essential cookies/scripts until opt-in; cookie inventory + policy wiring. References `security` for headers. |
 
 ## Activation
 
