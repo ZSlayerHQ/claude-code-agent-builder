@@ -65,16 +65,27 @@ Every generated CLAUDE.md follows this section order:
 - `hooks.PostToolUse`: every generated project includes a PostToolUse hook wired to `node $CLAUDE_PROJECT_DIR/.claude/hooks/prompt-injection-scan.mjs` with matcher `WebFetch|WebSearch|mcp__.*__(fetch|get|stealthy_fetch|bulk_stealthy_fetch|crawl|search)`. Hook scans INPUTS to the model (tool responses), not model outputs — see `references/security-patterns.md` for the threat catalogue and tuning. Tune the matcher per-project if the project uses additional external-content fetch tools (e.g. project-specific MCP browsers).
 - `hooks.PreToolUse` + `hooks.UserPromptSubmit`: every generated project wires two GOTCHA-awareness hooks — `PreToolUse` matcher `Edit|Write` → `node $CLAUDE_PROJECT_DIR/.claude/hooks/pre-edit-gotcha-check.mjs` (reads `session-docs/GOTCHAS.md`, scores G-NNN entries by weighted path signals against the file being edited, injects the top matches inline as `additionalContext`; silent zero-cost exit when GOTCHAS.md is absent or nothing matches) + `UserPromptSubmit` → `node $CLAUDE_PROJECT_DIR/.claude/hooks/user-prompt-gotcha-dedup-reset.mjs` (clears the per-turn dedup file so reminders re-fire on each new prompt). Pure Node.js, no MCP dependency. Per CLAUDE.md Rule 21.
 
-## start.bat
+## Launchers (`start.bat` + `start.command`)
 
-Every output project includes:
+Every output project ships a platform-appropriate launcher. Default to including both unless the operator's OS is known.
+
+**Windows — `start.bat`:**
 ```bat
 @echo off
 cd /d "%~dp0"
+set CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=70
 claude --dangerously-skip-permissions -n "<project-name>"
 ```
 
-The `-n "<project-name>"` flag is mandatory (per the agent builder's output rules) — without it, `/resume` and terminal titles render as generic UUIDs instead of a readable project name.
+**macOS / Linux — `start.command`** (Finder-double-clickable; POSIX sibling of `start.bat`):
+```sh
+#!/usr/bin/env bash
+cd "$(dirname "$0")"
+export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=70
+claude --dangerously-skip-permissions -n "<project-name>"
+```
+
+The `-n "<project-name>"` flag is mandatory in both (per the agent builder's output rules) — without it, `/resume` and terminal titles render as generic UUIDs instead of a readable project name. Note the env-var syntax difference: `set VAR=val` (batch) vs `export VAR=val` (POSIX). The `.gitattributes` template already pins `*.bat`/`*.cmd` to CRLF and `*.command`/`*.sh` to LF, so the scripts stay runnable on their native OS. On macOS the operator runs `chmod +x start.command` once to make it double-clickable.
 
 ## Manifest Entry Format
 

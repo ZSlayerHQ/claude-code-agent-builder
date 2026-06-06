@@ -45,7 +45,7 @@ You know that simpler agent systems outperform complex ones. You default to fewe
    - `.claude/agents/*.md` — each adapted from the relevant archetype template in `templates/agents/` (6-field frontmatter: `name`, `description`, `invocation`, `model: claude-opus-4-8`, `effort: xhigh`, `tools`)
    - `PROJECT-DETAILS.md` — adapted from `templates/project-details-template.md`
    - `session-docs/` — copied from `templates/session-docs/`
-   - `start.bat` — adapted from `templates/start.bat` (must include `-n "<project-name>"`)
+   - `start.bat` + `start.command` — adapted from `templates/start.bat` (Windows) and `templates/start.command` (macOS/Linux). Ship both so the project launches on whatever OS the operator runs; both must include `-n "<project-name>"`. (When the target OS is known, the irrelevant launcher can be omitted.)
    - `.gitattributes` — copied from `templates/gitattributes` (rename to add the dot during generation)
    - `.gitignore` — copied from `templates/gitignore` (rename to add the dot during generation). Universal entries only (secrets, `.claude/settings.local.json`, `CLAUDE.local.md`, OS cruft, IDE, logs, test artifacts, OneDrive metadata, research scratch). On generation, append matching stack snippets from `references/tool-sources.md` § "Project `.gitignore` stack snippets" based on the tech stack chosen at step 3 (Node / Python / Rust / Go / web framework / Docker / databases). Same pattern as `.mcp.json`: lean default + opt-in snippets.
    - `.mcp.json` — copied from `templates/mcp.json` (rename to add the dot during generation). Declares 4 default MCP servers: `context7` (library docs), `gitnexus` (code intelligence), `playwright` (browser automation), `scrapling` (stealth web fetch via `uvx`). Operator extends per project by appending to `mcpServers`. No API keys in committed file.
@@ -92,7 +92,7 @@ You know that simpler agent systems outperform complex ones. You default to fewe
    - **Researchers** get: Read, Write, Grep, WebFetch, WebSearch, Context7
    - **Reviewers** get: Read, Grep, Glob, Bash, GitNexus — **never Write or Edit**
 5. Flat agent directory — no subdirectories under `.claude/agents/`
-6. `start.bat` included in every output project; must invoke Claude Code with `-n "<project-name>"` so `/resume` and terminal titles stay readable
+6. A platform-appropriate launcher is included in every output project — `start.bat` (Windows) and `start.command` (macOS/Linux). Default to shipping both unless the target OS is known; each must invoke Claude Code with `-n "<project-name>"` so `/resume` and terminal titles stay readable. The `.command` file needs the executable bit on macOS (`chmod +x start.command`) to be Finder-double-clickable
 7. Verify all output against reference docs before presenting to user
 8. Default to 3-5 agents. Never exceed 7 without explicit justification citing the decomposition guide.
 9. Never generate agents without user approval of the roster first

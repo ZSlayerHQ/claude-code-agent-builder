@@ -37,8 +37,15 @@ Append to `mcpServers` in `.mcp.json` as needed. Common additions and their conf
 | Discord admin | `"discord-admin": { "command": "cmd", "args": ["/c", "npx", "-y", "@quadslab.io/discord-mcp"], "env": { "DISCORD_TOKEN": "${DISCORD_TOKEN}", "DISCORD_GUILD_ID": "${DISCORD_GUILD_ID}" } }` |
 | YouTube data | `"youtube": { "command": "cmd", "args": ["/c", "npx", "-y", "youtube-mcp-server"], "env": { "YOUTUBE_API_KEY": "${YOUTUBE_API_KEY}" } }` |
 | Reddit search | `"reddit": { "command": "cmd", "args": ["/c", "npx", "-y", "reddit-mcp-buddy"] }` |
+| GitHub (structured, opt-in — see note below) | `"github": { "type": "stdio", "command": "npx", "args": ["-y", "@modelcontextprotocol/server-github"], "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}" } }` |
 
 Env vars come from `.env` (gitignored) — never commit secrets to `.mcp.json`. See `references/mcp-implementation-patterns.md` for deeper guidance on per-project MCP design.
+
+### GitHub: CLI by default, MCP only when structured access earns it
+
+**Default to the `gh` CLI, not the GitHub MCP.** Every generated project already assumes `gh` for `git push`, PR creation, and the `commit-and-push` skill, so the CLI is a prerequisite the operator needs anyway — not an extra dependency. It costs **zero context budget** until invoked (runs through the Bash tool), authenticates once via `gh auth login` into the OS keychain (no PAT in any committed file), and pairs well with output-filtering wrappers. This is why the GitHub MCP is **not** in the default `.mcp.json`.
+
+**Add the GitHub MCP (row above) only when a project does structured, high-volume GitHub work** — bulk issue triage, cross-repo PR automation, or reading issue/PR bodies as data to act on programmatically. There the structured tool calls beat parsing CLI text. Trade-offs to weigh before adding it: it loads dozens of tool schemas into **every** session's context budget (whether or not GitHub work happens that session), needs a PAT (put it in `.env` → `${GITHUB_TOKEN}`, **never** the committed `.mcp.json`), and its raw JSON responses are heavier than filtered CLI output. For occasional GitHub work, the CLI wins; for GitHub-as-a-data-source workloads, the MCP earns its place.
 
 ---
 
