@@ -167,7 +167,7 @@ The technicality profile does NOT change:
 - Tool scoping per archetype (Auditors never get Write; this is structural)
 - Default MCPs / plugins (these are runtime capabilities, not prose)
 - Hook wiring (PreCompact + PostToolUse are universal)
-- The `model: claude-opus-4-8` + `effort: xhigh` defaults
+- The `model: claude-opus-5` + `effort: xhigh` defaults
 - Deny-list entries
 - Schema-of-schemas in the lexicon kit (if present)
 

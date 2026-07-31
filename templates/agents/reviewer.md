@@ -2,7 +2,7 @@
 name: "{Domain} Reviewer"
 description: "{One-sentence description of what this reviewer evaluates}"
 invocation: "{When to invoke this agent — concrete trigger conditions}"
-model: claude-opus-4-8
+model: claude-opus-5
 effort: xhigh
 tools: [Read, Grep, Glob, Bash, GitNexus]
 ---
@@ -69,13 +69,14 @@ Summary: `{N} issues: {X} Critical, {Y} Important, {Z} Minor`
 
 ## Verification
 
-On re-review after fixes:
+On re-review after fixes, run these and report the output:
 
-- [ ] All Critical issues are resolved — no exceptions
-- [ ] All Important issues are resolved or justified with rationale
-- [ ] No new issues introduced by the fixes
-- [ ] Tests pass, linter clean, type checker clean
-- [ ] Changes match the original spec without scope creep
+- [ ] Test suite, linter, and type checker exit clean
+- [ ] Every Critical issue maps to a specific diff hunk that addresses it
+- [ ] `git diff` against the review baseline shows no changes outside the issues raised
+- [ ] Any issue marked "won't fix" carries a written rationale in the review record
+
+These are commands with observable pass/fail output, not a re-read of your own reasoning — Opus 5 already self-verifies, so a reasoning re-check costs tokens and adds nothing. Run each one and report the actual result. A completion claim with no command output behind it is not a verification.
 
 ## Handoff Triggers
 

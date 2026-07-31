@@ -2,7 +2,7 @@
 name: "{Domain} Auditor"
 description: "{One-sentence description of what this auditor examines}"
 invocation: "{When to invoke this agent — concrete trigger conditions}"
-model: claude-opus-4-8
+model: claude-opus-5
 effort: xhigh
 tools: [Read, Grep, Glob, Bash]
 ---
@@ -65,12 +65,15 @@ Summary line: `{N} findings: {X} Critical, {Y} High, {Z} Medium, {W} Low`
 
 ## Verification
 
-After the builder applies fixes based on this audit:
+After the builder applies fixes based on this audit, run these and report the output:
 
-- [ ] Re-scan confirms all Critical and High findings are resolved
-- [ ] No new issues introduced by the fixes themselves
-- [ ] Medium/Low findings tracked for future resolution if not fixed now
-- [ ] Audit report updated with resolution status and date
+- [ ] Re-run the original scan — same tool, same flags, so the before/after is comparable
+- [ ] Every Critical and High finding resolves to a specific commit SHA or file:line showing the change
+- [ ] Test suite, linter, and type checker exit clean (the fixes did not regress anything)
+- [ ] Audit report updated in place with resolution status and date
+- [ ] Medium/Low findings that were not fixed are recorded as open, not silently dropped
+
+These are commands with observable pass/fail output, not a re-read of your own reasoning — Opus 5 already self-verifies, so a reasoning re-check costs tokens and adds nothing. Run each one and report the actual result. A completion claim with no command output behind it is not a verification.
 
 ## Handoff Triggers
 

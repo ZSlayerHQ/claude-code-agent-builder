@@ -10,7 +10,7 @@ Every generated agent file follows this exact section order:
    name: Title Case Agent Name
    description: One sentence (soft target ≤120 chars), specific enough for orchestrator routing.
    invocation: When to delegate to this agent — concrete trigger conditions.
-   model: claude-opus-4-8
+   model: claude-opus-5
    effort: xhigh
    tools: [Scoped tool list per archetype]
    ---
@@ -30,7 +30,11 @@ Every generated agent file follows this exact section order:
 
 7. **## Output Format** — what this agent produces. Table, code block, or numbered list of deliverables.
 
-8. **## Verification** — concrete checklist of things to verify before claiming work is done.
+8. **## Verification** — a checklist of **deterministic checks only**: commands with observable pass/fail output (test suite, linter, type checker, build, `git diff --stat`, a grep, a URL resolving, a file existing). Never LLM-side re-reads ("re-read your work and confirm it's right", "double-check the implementation matches the spec"). Close the section with the standing note that these are commands to run and report, not reasoning to repeat.
+
+   **Why (2026-07-31, Opus 5):** Anthropic's Opus 5 guidance says to remove verification instructions — the model self-verifies and self-corrects unprompted, so "include a final verification step" causes over-verification that costs tokens with no quality gain. Their §6 still endorses deterministic verification after parallel work, because a failing test is a fact about the filesystem rather than a reasoning slip the model can catch on its own. The section therefore survives, narrowed to the half that is not redundant with model behaviour. It also keeps the anti-rubber-stamp guarantee `session-docs/GOTCHAS.md` G-001 + G-002 demand: a completion claim still has to be backed by command output.
+
+   **Related:** do NOT write "only report high-severity issues" or "be conservative" into auditor/reviewer agents. Opus 5 follows that literally and under-reports. Ask for everything and filter in a separate pass — its review precision is high enough that the extra findings are mostly real.
 
 9. **## Handoff Triggers** — table with | Condition | Route To | columns. When does this agent pass work to another agent?
 

@@ -2,7 +2,7 @@
 name: "{Domain} Researcher"
 description: "{One-sentence description of what this researcher investigates}"
 invocation: "{When to invoke this agent — concrete trigger conditions}"
-model: claude-opus-4-8
+model: claude-opus-5
 effort: xhigh
 tools: [Read, Write, Grep, WebFetch, WebSearch, Context7]
 ---
@@ -65,14 +65,15 @@ Save to `research/YYYY-MM-DD-{topic}.md` with these required sections:
 
 ## Verification
 
-Before delivering a research report:
+Before delivering a research report, run these and report the output:
 
-- [ ] All claims have a cited source — no unsourced assertions
-- [ ] Sources are current and accessible (verify key URLs)
-- [ ] Recommendation directly answers the original question (no drift)
-- [ ] Trade-offs section is honest — every option has stated downsides
-- [ ] Report saved to `research/` with a descriptive dated filename
-- [ ] Comparison matrix uses consistent criteria across all options
+- [ ] Every load-bearing cited URL still resolves — a dead source is a dead claim
+- [ ] The report file exists at the declared path with a dated, descriptive filename
+- [ ] Every claim in the recommendation traces to a citation present in the body
+- [ ] The comparison matrix has a value in every cell — no blanks passed off as "n/a"
+- [ ] Every option in the matrix has at least one stated downside
+
+These are commands with observable pass/fail output, not a re-read of your own reasoning — Opus 5 already self-verifies, so a reasoning re-check costs tokens and adds nothing. Run each one and report the actual result. A completion claim with no command output behind it is not a verification.
 
 ## Handoff Triggers
 

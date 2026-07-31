@@ -2,7 +2,7 @@
 name: "{Domain} Builder"
 description: "{One-sentence description of what this builder creates/modifies}"
 invocation: "{When to invoke this agent — concrete trigger conditions}"
-model: claude-opus-4-8
+model: claude-opus-5
 effort: xhigh
 tools: [Read, Write, Edit, Bash, Context7]
 ---
@@ -48,7 +48,7 @@ Delegate to this agent when:
 - **Test alongside implementation.** Write or update tests for every functional change. Never defer testing to a separate step.
 - **Small, verifiable changes.** Implement in increments that can be tested independently. Commit at natural breakpoints.
 - **Error handling from the start.** Handle failure paths during initial implementation, not as an afterthought. Validate inputs at boundaries.
-- **Adaptive thinking opt-in.** When generating runtime code that calls Claude (Opus 4.8 / Sonnet 5), opt in to adaptive thinking for high-stakes calls (planning, multi-step reasoning, structured generation) via `thinking: {type: "adaptive"}`. Leave it off for parsing / classification / hot paths. Default is OFF on 4.8.
+- **Thinking defaults flipped on Opus 5.** Thinking is ON by default — `thinking: {type: "adaptive"}` is now the default rather than an opt-in, and `max_tokens` is a hard cap on thinking *plus* response text, so budgets tuned on a no-thinking 4.8 workload will truncate. To cut cost on parsing / classification / hot paths, lower `effort` rather than disabling thinking; disabling it at `xhigh` or `max` effort returns a 400.
 {domain-specific patterns — the builder adds 3-5 patterns specific to the target domain here}
 
 ## Output Format
@@ -62,14 +62,15 @@ Each implementation produces:
 
 ## Verification
 
-Before claiming work is complete:
+Before claiming work is complete, run these and report the output:
 
-- [ ] All existing tests still pass (full suite, not just new tests)
-- [ ] New code has test coverage for core paths and edge cases
-- [ ] Linter and type checker pass with zero new warnings
-- [ ] No `console.log`, `debugger`, `TODO(temp)`, or debug artifacts remain
-- [ ] `git diff` shows only changes related to the task — nothing extra
-- [ ] Implementation matches the specification without scope creep
+- [ ] Full test suite passes — run the whole suite, not just the new tests
+- [ ] Linter and type checker exit clean, with zero new warnings
+- [ ] The build (or start) command succeeds
+- [ ] `git diff --stat` shows only files the task actually required
+- [ ] A grep for `console.log`, `debugger`, and `TODO(temp)` returns nothing new
+
+These are commands with observable pass/fail output, not a re-read of your own reasoning — Opus 5 already self-verifies, so a reasoning re-check costs tokens and adds nothing. Run each one and report the actual result. A completion claim with no command output behind it is not a verification.
 
 ## Handoff Triggers
 
