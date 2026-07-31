@@ -13,8 +13,12 @@
 //   - On clean scan: silent exit (no output, no context injection)
 //   - On hit: write audit entry to .claude/audit-logs/prompt-injection-hits.jsonl
 //     and emit additionalContext warning the model about what was matched
-//   - Never blocks — the model gets to decide if the injection attempt
-//     succeeded or not; the hook makes the attempt visible
+//   - Warns, never blocks — this is a PostToolUse hook, so the tool has
+//     ALREADY run by the time it fires; it cannot un-fetch the content. Its
+//     job is to make an injection attempt VISIBLE so the model treats the
+//     content as untrusted, not to prevent the fetch. If you need a hard
+//     pre-fetch block, that is a different (PreToolUse) hook with different
+//     tradeoffs — don't try to make this one block.
 //
 // Wire-up in .claude/settings.json:
 //   "hooks": {
@@ -26,6 +30,17 @@
 //       }]
 //     }]
 //   }
+//
+// Matcher scope (tune per project — see CLAUDE.md Rule 13):
+//   The default matcher covers web-fetch-shaped tools (WebFetch/WebSearch and
+//   MCP tools whose name STARTS with fetch/get/crawl/search/stealthy_fetch/…).
+//   It does NOT cover untrusted external content that arrives under other
+//   tool-name shapes — e.g. a team chat-bus MCP, an issue-tracker or chat
+//   reader (mcp__*__get_messages), or a project-specific browser MCP. If THIS
+//   project ingests untrusted external content via such
+//   tools, extend the settings.json matcher to include them. Broadening the
+//   default for ALL projects is a deliberate call, not an oversight — keep the
+//   default lean and add coverage where a project actually needs it.
 
 import { readFileSync, appendFileSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';

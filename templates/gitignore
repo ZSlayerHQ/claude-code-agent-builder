@@ -29,6 +29,13 @@ service-account*.json
 CLAUDE.local.md
 .claude/agents/*.local.md
 .claude/skills/*.local/
+.claude/audit-logs/
+
+# --- Backups / edit scratch (parse-modify-write scripts leave these) ---------
+*.bak
+*.bak-*
+*.pre-*
+*.orig
 
 # --- Operating system --------------------------------------------------------
 .DS_Store
@@ -52,7 +59,7 @@ $RECYCLE.BIN/
 logs/
 log/
 
-# --- Test artifacts (BAB convention: never commit) ---------------------------
+# --- Test artifacts (convention: never commit) -------------------------------
 playwright-report/
 test-results/
 screenshots/

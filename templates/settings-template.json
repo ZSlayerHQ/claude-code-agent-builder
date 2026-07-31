@@ -34,14 +34,14 @@
         "matcher": "manual",
         "hooks": [{
           "type": "command",
-          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/pre-compact-state-write.mjs"
+          "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-compact-state-write.mjs\""
         }]
       },
       {
         "matcher": "auto",
         "hooks": [{
           "type": "command",
-          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/pre-compact-state-write.mjs"
+          "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-compact-state-write.mjs\""
         }]
       }
     ],
@@ -50,7 +50,7 @@
         "matcher": "WebFetch|WebSearch|mcp__.*__(fetch|get|stealthy_fetch|bulk_stealthy_fetch|crawl|search)",
         "hooks": [{
           "type": "command",
-          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/prompt-injection-scan.mjs"
+          "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/prompt-injection-scan.mjs\""
         }]
       }
     ],
@@ -59,7 +59,7 @@
         "matcher": "Edit|Write",
         "hooks": [{
           "type": "command",
-          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/pre-edit-gotcha-check.mjs"
+          "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/pre-edit-gotcha-check.mjs\""
         }]
       }
     ],
@@ -67,7 +67,7 @@
       {
         "hooks": [{
           "type": "command",
-          "command": "node $CLAUDE_PROJECT_DIR/.claude/hooks/user-prompt-gotcha-dedup-reset.mjs"
+          "command": "node \"$CLAUDE_PROJECT_DIR/.claude/hooks/user-prompt-gotcha-dedup-reset.mjs\""
         }]
       }
     ]
