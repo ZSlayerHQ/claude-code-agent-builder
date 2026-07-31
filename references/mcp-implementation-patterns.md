@@ -300,8 +300,8 @@ When you do go OAuth:
 ```js
 function validateToken(token) {
   const decoded = jwt.verify(token, publicKey, {
-    audience: 'https://launcher.zslayerhq.com/mcp',  // your resource id
-    issuer: 'https://auth.zslayerhq.com',
+    audience: 'https://mcp.example.com/mcp',  // your resource id
+    issuer: 'https://auth.example.com',
   });
   return decoded.scopes || [];
 }
@@ -388,7 +388,7 @@ The standard config the MCP-aware client looks for:
     },
     "context7": {
       "command": "npx",
-      "args": ["-y", "@upstash/context7-mcp@latest"]
+      "args": ["-y", "@upstash/context7-mcp@3"]
     },
     "filesystem": {
       "command": "npx",

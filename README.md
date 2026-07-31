@@ -18,10 +18,10 @@ Each generated project ships with:
 
 - **`CLAUDE.md`** — domain-aware identity, operational principles, agent roster, file locations (~80-150 lines)
 - **`.claude/agents/*.md`** — 3-5 specialist subagents, each with the right tool scope (Builders write, Auditors don't, etc.)
-- **`.claude/settings.json`** — Opus 4.8 + xhigh effort + 6 default plugins (`superpowers`, `feature-dev`, `code-review`, `frontend-design`, `context-mode`, `skill-creator`) + deny list + PreCompact + PostToolUse hooks
+- **`.claude/settings.json`** — Opus 5 + xhigh effort + 6 default plugins (`superpowers`, `feature-dev`, `code-review`, `frontend-design`, `context-mode`, `skill-creator`) + deny list + PreCompact / PostToolUse / PreToolUse / UserPromptSubmit hooks
 - **`.mcp.json`** — 4 default MCP servers (`context7`, `gitnexus`, `playwright`, `scrapling` via `uvx`)
-- **`.claude/hooks/`** — `pre-compact-state-write.mjs` (auto-updates STATE.md before context compaction) + `prompt-injection-scan.mjs` (scans tool-response inputs for known injection patterns)
-- **`.claude/skills/`** — operator-facing README + starter `SKILL.md` template
+- **`.claude/hooks/`** — `pre-compact-state-write.mjs` (auto-updates STATE.md before context compaction) + `prompt-injection-scan.mjs` (scans tool-response inputs for known injection patterns) + `pre-edit-gotcha-check.mjs` (surfaces matching GOTCHAS entries inline before an Edit/Write fires) + `user-prompt-gotcha-dedup-reset.mjs`
+- **`.claude/skills/`** — operator-facing README + starter `SKILL.md` template + 10 default-on skills: `stale-docs-audit`, `post-compact-reload`, `session-end-update`, `security`, `search-optimization`, `commit-and-push`, `consent-cmp`, `systematic-debugging`, `test-driven-development`, and `codex-dispatch` (independent verification via OpenAI Codex CLI)
 - **`session-docs/`** — `STATE.md` / `SESSION-LOG.md` / `GOTCHAS.md` / `DECISIONS.md` / `AUDIT-CHECKLIST.md`
 - **`docs/tool-sources.md`** — install URLs + activation notes for every default tool
 - **`docs/research/`** — wave-based research index, populated if you opted into a research wave at intake
@@ -34,7 +34,7 @@ Each generated project ships with:
 
 - **Four-agent ceiling.** Most projects need 3-5 agents. Anything beyond 7 needs explicit justification — benefits plateau at 4 and ~80% of multi-agent failures come from coordination overhead, not missing capability.
 - **Tool scoping is the primary safety value.** Auditors and Reviewers never get `Write` or `Edit`. Builders get a curated set. Researchers get web + Context7. The roster is shaped by what each agent can *touch*, not just what it knows.
-- **Positive delegation triggers.** Per Anthropic's Opus 4.8 guidelines: agent files say "Delegate to X when …" not "Avoid over-delegating." Opus 4.8 under-spawns by default; positive framing calibrates it.
+- **Explicit delegation thresholds.** Agent files state when to delegate as a concrete condition ("when work spans 3+ independent workstreams or 10+ file reads") rather than a vague lean in either direction. This matters because the model-side calibration keeps flipping — Opus 4.6 over-spawned, 4.7/4.8 under-spawned, Opus 5 over-spawns again — and an explicit threshold survives the flip where "delegate more" or "delegate less" does not.
 - **Research-wave dispatch.** When a new project has 3+ orthogonal research territories (third-party APIs, regulatory boundaries, competitor sweeps, library evals, domain rule sets), the builder dispatches a parallel subagent wave — one subagent per territory — and synthesises into `docs/research/00-recommendations.md` before proposing the roster.
 - **Lexicon discipline.** App-shaped projects get a `lexicon/resources/_schema.yml` + an auto-loaded naming rule. Code generates from the lexicon; the lexicon does not generate from code.
 - **Tight outputs.** No AUP-redundant policy padding (Anthropic's system prompt already handles it). No no-op deny rules (audit your MCP tool surface first). See `references/claude-md-slimming-guide.md`.
@@ -81,7 +81,7 @@ See `CLAUDE.md` for the full flow of each mode.
 
 ## Versioning
 
-This repo follows the Claude model generation it targets. Current target: **Opus 4.8 / Sonnet 4.6 / Haiku 4.5** (current generation). When Anthropic ships a new generation, the relevant reference docs are updated and the templates pinned to the new model IDs.
+This repo follows the Claude model generation it targets. Current target: **Opus 5** (with Fable 5 / Sonnet 5 / Haiku 4.5 as the surrounding current generation). When Anthropic ships a new generation, the relevant reference docs are updated and the templates pinned to the new model IDs.
 
 ## Contributing
 

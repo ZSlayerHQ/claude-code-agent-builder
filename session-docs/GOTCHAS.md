@@ -104,3 +104,17 @@ For per-project gotchas (in generated projects), see that project's own `session
 - Reading "operator overrode CLAUDE.md once" as "the constraint is gone forever"
 
 **Fix:** Overrides are scoped to the specific task they were granted for. The CLAUDE.md constraint resumes as the default for the next ask. If unsure, ask: "this task overrides CLAUDE.md X — should I treat the override as scoped to just this, or broader?"
+
+---
+
+## G-009 — Copy the settings.json deny list from the template; never hand-write it
+
+**Mistake mode:** Generating `.claude/settings.json` by hand-writing `permissions.deny` from memory of "the standard Bash safety rules" instead of copying `templates/settings-template.json`. A fork-bomb pattern like `Bash(:(){ :|:& };:)` contains inner `()` that Claude Code's permission parser reads as an empty `Bash()` — it logs `Invalid permission rule … Empty parentheses` at every launch and skips the rule. Non-fatal, but it warns the operator on every start and the rule they think is protecting them is not loaded.
+
+**Warning signs:**
+- Writing a settings.json `deny` list without opening `templates/settings-template.json` first
+- Any deny pattern containing literal `()`, `{}`, or other shell metacharacters inside `Bash(...)`
+
+**Fix:** Copy the deny list verbatim from `templates/settings-template.json` — it uses clean prefix patterns (`Bash(rm -rf *)`, `Bash(git push --force*)`, `Bash(git reset --hard*)`, `Bash(*--no-verify*)`, the `Read(./.env*)` set). Never put parens or braces inside a `Bash(...)` pattern. There is no clean way to express a fork bomb as a permission rule, so rely on the blanket `Bash(rm -rf *)` plus the catastrophic-path rules instead.
+
+**Incident:** 2026-06-14. A generation hand-wrote a deny list including a fork-bomb pattern; the launcher flagged it on first open. The template itself was clean — the bug was generation-side, from not copying it. The other 11 deny rules were unaffected, which is exactly why it went unnoticed until launch.

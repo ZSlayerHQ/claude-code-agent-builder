@@ -16,7 +16,7 @@ Every generated agent file follows this exact section order:
    ---
    ```
 
-   `model` + `effort` defaults are calibrated for Opus 4.8 agentic Claude Code use cases. Override per-agent only when the project has a specific reason (latency-critical hot paths can downgrade to `model: claude-haiku-4-5-20251001` + `effort: medium`).
+   `model` + `effort` defaults are calibrated for Opus 5 agentic Claude Code use cases. Note the API default effort is `high`; `xhigh` here is a deliberate step-up for long-horizon agentic work, and Anthropic advises re-running an effort sweep per model generation rather than carrying settings over. Override per-agent only when the project has a specific reason (latency-critical hot paths can downgrade to `model: claude-haiku-4-5-20251001` + `effort: medium`).
 
 2. **# Agent Title** — matches the `name` field
 

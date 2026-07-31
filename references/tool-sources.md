@@ -18,7 +18,7 @@ Every generated project ships a `.mcp.json` at root with these 4 servers active.
 
 | MCP | Command | Purpose |
 |---|---|---|
-| `context7` | `npx -y @upstash/context7-mcp@latest` | Library / framework docs lookup (Next.js, Prisma, SQLAlchemy, MapLibre, etc.). Use during implementation when an API surface is unfamiliar. |
+| `context7` | `npx -y @upstash/context7-mcp@3` | Library / framework docs lookup (Next.js, Prisma, SQLAlchemy, MapLibre, etc.). Use during implementation when an API surface is unfamiliar. |
 | `gitnexus` | `npx -y gitnexus@latest` | Code intelligence — `route_map`, `impact`, `tool_map`, dependency graph, change-impact analysis. Use during refactors + reviews to find dependents two files away. |
 | `playwright` | `npx -y @playwright/mcp@latest` | Browser automation — navigate, click, type, screenshot, evaluate JS, fill forms. Use for E2E tests + visual regression + UI debugging. |
 | `scrapling` | `uvx scrapling mcp` | Stealth web fetch with anti-bot bypass. 6 tools: `stealthy_fetch`, `bulk_stealthy_fetch`, `open_session`, `close_session`, `list_sessions`, `screenshot`. `uvx` auto-installs scrapling on first use (requires `uv` on PATH). |
