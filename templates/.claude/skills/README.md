@@ -44,6 +44,10 @@ Manual path: copy `_example/SKILL.md` into a new subdirectory (`<skill-name>/SKI
     SKILL.md                 ← ships by default — safe survey/sweep/stage/commit/push
   consent-cmp/
     SKILL.md                 ← ships by default — cookie-consent / CMP scaffolder
+  systematic-debugging/
+    SKILL.md                 ← ships by default — root-cause-first debugging discipline
+  test-driven-development/
+    SKILL.md                 ← ships by default — red/green/refactor discipline
   <your-skill-name>/
     SKILL.md                 ← canonical filename (required)
     references/              ← optional supporting docs the skill can read
@@ -63,6 +67,8 @@ The `SKILL.md` filename is mandatory — Claude Code looks for that exact name i
 | `search-optimization` | SEO/AEO/GEO work, "rank", "AI citations", meta/structured data, pre-launch SEO audit | Optimize pages for classical search AND AI answer engines — titles/meta/headings/semantic HTML, Core Web Vitals, structured data, AEO citation patterns. Volatile thresholds date-stamped (verify current). |
 | `commit-and-push` | "commit and push", "ship this", finishing a unit of work | Safe ship: survey → secret-sweep → explicit staging → Conventional-Commit → safe push → verify clean. Obeys project-specific push governance over its own defaults. |
 | `consent-cmp` | "cookie consent", "GDPR/CCPA banner", "CMP", pre-launch of any site setting cookies/loading analytics | Scaffolds a compliant consent layer — banner + consent store + the GATE that withholds non-essential cookies/scripts until opt-in; cookie inventory + policy wiring. References `security` for headers. |
+| `systematic-debugging` | any bug / test failure / crash / unexpected behaviour, before proposing a fix | Root-cause-first discipline: read the error, reproduce, check what changed, trace to source, one hypothesis + one minimal fix, verify. Includes the 3-fix → question-the-architecture rule. |
+| `test-driven-development` | before implementing any feature or bugfix; when it "looks too simple to test" | RED/GREEN/REFACTOR: write the failing test first, watch it fail, minimal code to pass, refactor while green. Delete-means-delete when code was written before the test. |
 
 ## Activation
 
