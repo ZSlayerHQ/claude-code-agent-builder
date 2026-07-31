@@ -48,7 +48,7 @@ Delegate to this agent when:
 - **Test alongside implementation.** Write or update tests for every functional change. Never defer testing to a separate step.
 - **Small, verifiable changes.** Implement in increments that can be tested independently. Commit at natural breakpoints.
 - **Error handling from the start.** Handle failure paths during initial implementation, not as an afterthought. Validate inputs at boundaries.
-- **Thinking defaults flipped on Opus 5.** Thinking is ON by default — `thinking: {type: "adaptive"}` is now the default rather than an opt-in, and `max_tokens` is a hard cap on thinking *plus* response text, so budgets tuned on a no-thinking 4.8 workload will truncate. To cut cost on parsing / classification / hot paths, lower `effort` rather than disabling thinking; disabling it at `xhigh` or `max` effort returns a 400.
+- **Thinking config applies to runtime code you write, never to this session.** When generating app code that calls the Anthropic API: thinking is ON by default on Opus 5, and `max_tokens` caps thinking *plus* response text together, so a budget carried over from a no-thinking model will truncate — size it up. To trim cost on parsing / classification / hot paths, step `effort` down; do not disable thinking (at `xhigh` or `max` it is a 400 anyway). **In the Claude Code session itself, thinking stays on and output is not budget-shaved** — `CLAUDE_CODE_MAX_OUTPUT_TOKENS` is a per-response ceiling, not a target to tune down.
 {domain-specific patterns — the builder adds 3-5 patterns specific to the target domain here}
 
 ## Output Format

@@ -85,6 +85,8 @@ Full ladder: `low` / `medium` / `high` / `xhigh` / `max`. **The API default is `
 
 At `xhigh` or `max`, set a large `max_tokens` (64K is a reasonable starting point) so the model has room to think and act across subagents and tool calls.
 
+> **Session vs. API code — do not confuse them.** Everything above is about calls *your code* makes to the Anthropic API, where `max_tokens`, `effort`, and `thinking` are yours to tune against a cost budget. **Inside a Claude Code session, thinking stays on and output tokens are not shaved.** The session exists to do the reasoning; disabling thinking or trimming `CLAUDE_CODE_MAX_OUTPUT_TOKENS` to save cost trades away the thing you are paying for. That env var is a per-response ceiling to stop runaway output, not a budget dial. Cost control for sessions is scope and context discipline, not throttling the model mid-task.
+
 > **Agent-builder note.** Generated agents pin `effort: xhigh` by default. Against Opus 5's guidance that is a deliberate step *up* from the API default — defensible for builder/auditor archetypes doing long-horizon work, but worth an eval sweep rather than treating as free. Consider `low`/`medium` for narrow, mechanical agents.
 
 ### Legacy: key 4.7/4.8 changes from 4.6
