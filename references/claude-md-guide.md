@@ -55,6 +55,12 @@ The canonical section order the builder follows when generating CLAUDE.md files.
    - Must be project-specific: don't repeat universal coding standards that Claude already knows
    - Must be enforceable: the agent should be able to check whether it followed the rule
 
+5a. **ALWAYS include the supersession rule verbatim** in every generated `## Operational Principles` block, whatever the domain
+    (`templates/claude-md-template.md` carries it as principle 13): "Superseding a rule means DELETING the old one, in the same
+    revision, and updating every dependent." Then name the dependents that matter for that project (tests, scenarios, enums,
+    cross-references, cards). It is domain-independent, and it is the rule whose absence lets a document accumulate
+    contradictions faster than review can retire them.
+
 6. **`## Session Lifecycle`** -- what to read at session start, what to update at session end. The standard pattern:
    - START: Read session-docs/ (SESSION-LOG.md, GOTCHAS.md, DECISIONS.md) and PROJECT-DETAILS.md
    - END: Update session-docs/ with what was done, what's unfinished, what's next

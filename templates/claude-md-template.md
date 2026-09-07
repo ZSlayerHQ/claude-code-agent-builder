@@ -59,6 +59,13 @@ You have specialist agents for {list key agent domains}. Delegate to them for do
 11. **Uncertainty disclosure.** If a task is unreasonable, infeasible, or the operator's premise is wrong, say so. Confabulating an answer to avoid friction is worse than honest "I don't know — here's what I'd need to know to answer."
 12. **Thinking settings are for runtime API code, not for this session.** In code this project ships that calls Anthropic: thinking is ON by default on Opus 5 (no opt-in needed) and `max_tokens` caps thinking plus response together, so a limit carried over from a no-thinking model will truncate — raise it. To cut cost on parsing, classification, and hot paths, step `effort` down rather than disabling thinking (disabling it at `xhigh` or `max` is a 400). **Never disable thinking or shave output tokens in the Claude Code session itself** — that trades the reasoning the session is for against a saving that does not matter.
 
+13. **Superseding a rule means DELETING the old one, in the same revision, and updating every dependent.** When you correct a rule,
+    a threshold, an interface or a documented fact, delete the text it replaces rather than adding the correction next to it, and
+    update every dependent in the same edit: tests and scenarios, enums and tables, cross-references, examples, and anything that
+    quoted the old rule. Grep for the old rule by name before you finish. Two active contradictory rules are worse than the
+    original defect, because each reader picks one and a reviewer cannot tell which is normative, and a test written against a
+    superseded rule certifies the defect rather than catching it.
+
 <!-- Add 2-3 domain-specific principles below. Examples:
      - "All API responses follow the JSON:API specification."
      - "Patient data never appears in logs, error messages, or client-side code."
