@@ -2,7 +2,7 @@
 name: "{Domain} Reviewer"
 description: "{One-sentence description of what this reviewer evaluates}"
 invocation: "{When to invoke this agent — concrete trigger conditions}"
-model: claude-opus-5
+model: opus
 effort: xhigh
 tools: [Read, Grep, Glob, Bash, GitNexus]
 ---
@@ -76,7 +76,7 @@ On re-review after fixes, run these and report the output:
 - [ ] `git diff` against the review baseline shows no changes outside the issues raised
 - [ ] Any issue marked "won't fix" carries a written rationale in the review record
 
-These are commands with observable pass/fail output, not a re-read of your own reasoning — Opus 5 already self-verifies, so a reasoning re-check costs tokens and adds nothing. Run each one and report the actual result. A completion claim with no command output behind it is not a verification.
+These are commands with observable pass/fail output, not a re-read of your own reasoning — Opus 5.x already self-verifies, so a reasoning re-check costs tokens and adds nothing. Run each one and report the actual result. A completion claim with no command output behind it is not a verification.
 
 ## Handoff Triggers
 

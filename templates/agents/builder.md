@@ -2,7 +2,7 @@
 name: "{Domain} Builder"
 description: "{One-sentence description of what this builder creates/modifies}"
 invocation: "{When to invoke this agent — concrete trigger conditions}"
-model: claude-opus-5
+model: opus
 effort: xhigh
 tools: [Read, Write, Edit, Bash, Context7]
 ---
@@ -48,7 +48,7 @@ Delegate to this agent when:
 - **Test alongside implementation.** Write or update tests for every functional change. Never defer testing to a separate step.
 - **Small, verifiable changes.** Implement in increments that can be tested independently. Commit at natural breakpoints.
 - **Error handling from the start.** Handle failure paths during initial implementation, not as an afterthought. Validate inputs at boundaries.
-- **Thinking config applies to runtime code you write, never to this session.** When generating app code that calls the Anthropic API: thinking is ON by default on Opus 5, and `max_tokens` caps thinking *plus* response text together, so a budget carried over from a no-thinking model will truncate — size it up. To trim cost on parsing / classification / hot paths, step `effort` down; do not disable thinking (at `xhigh` or `max` it is a 400 anyway). **In the Claude Code session itself, thinking stays on and output is not budget-shaved** — `CLAUDE_CODE_MAX_OUTPUT_TOKENS` is a per-response ceiling, not a target to tune down.
+- **Thinking config applies to runtime code you write, never to this session.** When generating app code that calls the Anthropic API: thinking is always on for Opus 5.5 / Fable 5.1 (disabling it is a 400 at any effort) and on by default for Opus 5, and `max_tokens` caps thinking *plus* response text together, so a budget carried over from a no-thinking model will truncate — size it up. To trim cost on parsing / classification / hot paths, step `effort` down; do not disable thinking (at `xhigh` or `max` it is a 400 anyway). **In the Claude Code session itself, thinking stays on and output is not budget-shaved** — `CLAUDE_CODE_MAX_OUTPUT_TOKENS` is a per-response ceiling, not a target to tune down.
 {domain-specific patterns — the builder adds 3-5 patterns specific to the target domain here}
 
 ## Output Format
@@ -70,7 +70,7 @@ Before claiming work is complete, run these and report the output:
 - [ ] `git diff --stat` shows only files the task actually required
 - [ ] A grep for `console.log`, `debugger`, and `TODO(temp)` returns nothing new
 
-These are commands with observable pass/fail output, not a re-read of your own reasoning — Opus 5 already self-verifies, so a reasoning re-check costs tokens and adds nothing. Run each one and report the actual result. A completion claim with no command output behind it is not a verification.
+These are commands with observable pass/fail output, not a re-read of your own reasoning — Opus 5.x already self-verifies, so a reasoning re-check costs tokens and adds nothing. Run each one and report the actual result. A completion claim with no command output behind it is not a verification.
 
 ## Handoff Triggers
 

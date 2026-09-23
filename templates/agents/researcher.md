@@ -2,7 +2,7 @@
 name: "{Domain} Researcher"
 description: "{One-sentence description of what this researcher investigates}"
 invocation: "{When to invoke this agent — concrete trigger conditions}"
-model: claude-opus-5
+model: opus
 effort: xhigh
 tools: [Read, Write, Grep, WebFetch, WebSearch, Context7]
 ---
@@ -73,7 +73,7 @@ Before delivering a research report, run these and report the output:
 - [ ] The comparison matrix has a value in every cell — no blanks passed off as "n/a"
 - [ ] Every option in the matrix has at least one stated downside
 
-These are commands with observable pass/fail output, not a re-read of your own reasoning — Opus 5 already self-verifies, so a reasoning re-check costs tokens and adds nothing. Run each one and report the actual result. A completion claim with no command output behind it is not a verification.
+These are commands with observable pass/fail output, not a re-read of your own reasoning — Opus 5.x already self-verifies, so a reasoning re-check costs tokens and adds nothing. Run each one and report the actual result. A completion claim with no command output behind it is not a verification.
 
 ## Handoff Triggers
 

@@ -18,7 +18,7 @@ Each generated project ships with:
 
 - **`CLAUDE.md`** — domain-aware identity, operational principles, agent roster, file locations (~80-150 lines)
 - **`.claude/agents/*.md`** — 3-5 specialist subagents, each with the right tool scope (Builders write, Auditors don't, etc.)
-- **`.claude/settings.json`** — Opus 5 + xhigh effort + 6 default plugins (`superpowers`, `feature-dev`, `code-review`, `frontend-design`, `context-mode`, `skill-creator`) + deny list + PreCompact / PostToolUse / PreToolUse / UserPromptSubmit hooks
+- **`.claude/settings.json`** — the `opus` alias (Opus 5.5 on Claude Code ≥ 2.1.280) + pinned `xhigh` effort + 6 default plugins (`superpowers`, `feature-dev`, `code-review`, `frontend-design`, `context-mode`, `skill-creator`) + deny list + PreCompact / PostToolUse / PreToolUse / UserPromptSubmit hooks
 - **`.mcp.json`** — 4 default MCP servers (`context7`, `gitnexus`, `playwright`, `scrapling` via `uvx`)
 - **`.claude/hooks/`** — `pre-compact-state-write.mjs` (auto-updates STATE.md before context compaction) + `prompt-injection-scan.mjs` (scans tool-response inputs for known injection patterns) + `pre-edit-gotcha-check.mjs` (surfaces matching GOTCHAS entries inline before an Edit/Write fires) + `user-prompt-gotcha-dedup-reset.mjs`
 - **`.claude/skills/`** — operator-facing README + starter `SKILL.md` template + 10 default-on skills: `stale-docs-audit`, `post-compact-reload`, `session-end-update`, `security`, `search-optimization`, `commit-and-push`, `consent-cmp`, `systematic-debugging`, `test-driven-development`, and `codex-dispatch` (independent verification via OpenAI Codex CLI)
@@ -81,7 +81,7 @@ See `CLAUDE.md` for the full flow of each mode.
 
 ## Versioning
 
-This repo follows the Claude model generation it targets. Current target: **Opus 5** (with Fable 5 / Sonnet 5 / Haiku 4.5 as the surrounding current generation). When Anthropic ships a new generation, the relevant reference docs are updated and the templates pinned to the new model IDs.
+This repo follows the Claude model generation it targets. Current target: **Opus 5.5** (with Fable 5.1 / Sonnet 5 / Haiku 4.5 as the surrounding current generation). Templates use the `opus` alias rather than a pinned ID, so generated projects move to a new Opus with a Claude Code update; effort stays pinned at `xhigh` because each new model can ship a different default. When Anthropic ships a new generation, the relevant reference docs are updated.
 
 ## Contributing
 
