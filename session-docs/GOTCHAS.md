@@ -118,3 +118,19 @@ For per-project gotchas (in generated projects), see that project's own `session
 **Fix:** Copy the deny list verbatim from `templates/settings-template.json` — it uses clean prefix patterns (`Bash(rm -rf *)`, `Bash(git push --force*)`, `Bash(git reset --hard*)`, `Bash(*--no-verify*)`, the `Read(./.env*)` set). Never put parens or braces inside a `Bash(...)` pattern. There is no clean way to express a fork bomb as a permission rule, so rely on the blanket `Bash(rm -rf *)` plus the catastrophic-path rules instead.
 
 **Incident:** 2026-06-14. A generation hand-wrote a deny list including a fork-bomb pattern; the launcher flagged it on first open. The template itself was clean — the bug was generation-side, from not copying it. The other 11 deny rules were unaffected, which is exactly why it went unnoticed until launch.
+
+## G-010 — A second writer on a reference doc can overwrite it with an older baseline; a model sweep is only as complete as its regex
+
+**Mistake mode:** Two related failures, both from automated passes that edited this repo's files without a builder session reading the result.
+
+1. A scheduled "refresh the model guidelines" job rewrote `references/anthropic-guidelines-full.md` from its own copy, which was built on an older baseline. It added correct new facts but silently discarded a later restructure (a prompt-lever block, a per-generation delegation table) and regressed the header to an older model. The file sat uncommitted for weeks with its body contradicting the committed rules.
+2. A model sweep replaced one pinned ID with the `opus` alias across the templates but missed every agent whose frontmatter named a *different* pinned ID, leaving one pinned agent per project. It looked complete because the `settings.json` files, which it did catch, were what anyone checked.
+
+**Warning signs:**
+- `git status` shows a `references/*.md` file modified by something other than this session, and the diff moves the "refreshed on" date *backwards*
+- A sweep's grep pattern names one model ID while the tree holds agents pinned to more than one
+- A changelog paragraph in a doc describes this repo in the third person — the file came from outside
+
+**Fix:** Any cross-system pass that edits a reference doc must diff against HEAD before writing, and a builder session must re-read its reference docs when they show as modified (G-002 applies: open the file). Before replacing a modified reference doc, read the *whole* uncommitted diff and carry forward every hunk that is a fact rather than a structural regression — "the header is old" does not mean the body is. For model sweeps, grep for the *set* of IDs (e.g. `claude-opus-4-8|claude-opus-5\b|claude-opus-5-5`) plus the prose forms (`Opus 5\b`), read a sample of the hits, and state what the pattern cannot see (agents with no `model:` field at all). A swept number is a hypothesis (`.claude/rules/01-identity.md`).
+
+**Incident:** 2026-09-22, Opus 5.5 launch day. Both failures were found while getting situated; the refresh then repeated the first one in the other direction by reading only part of a mixed diff and dropping newer facts, which a later session restored.
