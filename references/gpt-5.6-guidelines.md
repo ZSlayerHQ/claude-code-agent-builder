@@ -6,6 +6,16 @@ wave (OpenAI official docs + comparative/verification research + hands-on dispat
 recipes, long-run spawn patterns, verdict schemas) lives in the `codex-dispatch` skill
 (`.claude/skills/codex-dispatch/`) — load that when you actually dispatch; this doc does not repeat it.
 
+> **GPT-6 update (2026-09).** OpenAI now ships **GPT-6 Astra** (`gpt-6-astra`, flagship, GA on the API
+> 2026-09-03) and **GPT-6 Sol / Luna** (`gpt-6-sol`, `gpt-6-luna`) — Sol is OpenAI's recommended Codex model, at
+> half the 5.6 Sol price. There is no GPT-6 Terra. The 5.6 tiers "remain available during the rollout". This doc's
+> prompting doctrine, CLI mechanics and cross-family verification theory still apply; model-specific facts below
+> are for the 5.6 tiers unless a row says otherwise, and the `codex-dispatch` skill carries the current lane choice.
+> **One measured head-to-head (2026-09-23):** same review prompt on a website compliance audit, both at `medium`,
+> read-only. Astra found the most real issues but ranked a false positive first (it miscounted a `../..` import
+> as unresolvable, which a read-only run cannot build to check); GPT-6 Sol found every core issue (one partially)
+> with zero false positives at about a fifth of Astra's cost. One run each: a data point, not a benchmark.
+
 > **Sol is the outside view.** Consensus among Claude instances multiplies confidence, not truth —
 > a model family shares blind spots. A different family (GPT-5.6) is the independent check. That,
 > not cost, is the primary reason to use it (see §9, which has the measured backing).
@@ -22,17 +32,36 @@ recipes, long-run spawn patterns, verdict schemas) lives in the `codex-dispatch`
 OpenAI ships **one generation, three durable capability tiers** (the number is the generation;
 Sol/Terra/Luna persist across generations):
 
-| Model (API id) | Tier | Best for | Cost /1M in → out* |
+| Model (API id) | Tier | Best for | Cost /1M in → out (short ctx; long ctx)* |
 |---|---|---|---|
-| **`gpt-5.6-sol`** (alias `gpt-5.6`) | Flagship | judgment-heavy verification / review / audit / plan-hardening; best long-context | **$5 → $30** |
-| `gpt-5.6-terra` | Mid | fast/light sweeps, subagent legs; "competitive with GPT-5.5" at lower cost | $2.50 → $15 |
-| `gpt-5.6-luna` | Fast/cheap | extraction / classification / routing / high volume; **weak long-context — never big-repo audits** | $1 → $6 |
+| **`gpt-6-astra`** | Next-gen flagship (GA on the API 2026-09-03) | the hardest judgment-heavy reviews and sign-off audits; tool calling only through the Responses API; `none` effort returns 400 | **$10 → $50; $20 → $75** (cached $1.00; cache writes $12.50; Fast mode 2x, none with EU data residency) |
+| **`gpt-6-sol`** (2026-09) | GPT-6 mid tier — OpenAI's recommended Codex default ("complex coding and agentic workflows"; `gpt-5.4` → `gpt-6-sol` is the documented migration) | the default verifier lane; at `low`, mechanical / fan-out legs (there is no GPT-6 Terra). Effort `none`–`max` (default `medium`); 1.05M ctx / 922K in / 128K out; Apr 20 2026 cutoff; Chat Completions tool calling only at `none` | **$2 → $10; $4 → $15** (cached $0.20; cache writes $2.50) |
+| **`gpt-6-luna`** (2026-09) | GPT-6 fast tier — "focused, repeatable tasks": extraction, classification, structured summaries; `gpt-5.4-mini` → `gpt-6-luna` | effort up to `max`, **no Ultra**; 1.05M ctx; May 18 2026 cutoff | **$0.10 → $0.50; $0.20 → $0.75** (cached $0.01) |
+| **`gpt-5.6-sol`** (alias `gpt-5.6`) | Flagship (5.6) | rollout fallback for the Sol lane; best long-context of the 5.6 tiers | **$4 → $20; $8 → $30** (promo through at least 2026-11-21) |
+| `gpt-5.6-terra` | Mid | fast/light sweeps, subagent legs; "competitive with GPT-5.5" at lower cost. `gpt-6-sol` at `low` now covers this lane (same input and cached rates, cheaper output) | $2 → $12; $4 → $18 |
+| `gpt-5.6-luna` | Fast/cheap | extraction / classification / routing / high volume, and web research; **weak long-context, never big-repo audits** | $0.20 → $1.20; $0.40 → $1.80 |
 
-*Prices per the OpenAI announcement — verify live. **Effort ladder:** `none → minimal → low → medium
+*Rates verified 2026-09-21/22 against the official developers.openai.com pricing page. **Pricing is two-tier by
+context length** (short vs long context columns). The 2026-07-30 cuts (Luna −80%, Terra −20%) are confirmed on the
+primary rate card; 5.6 Sol carries a further >20% promotional cut from 2026-08-21, good at least through 2026-11-21 —
+re-check after that date. Cache reads for 5.6: Sol $0.40, Terra $0.20, Luna $0.02 (short ctx). Batch and Flex run at
+half price; "Priority processing" was renamed **Fast mode** on 2026-07-30 (`service_tier: "fast"`, old
+`"priority"` still accepted) at roughly 2x standard rates. Also on the card: `gpt-5.6-cyber` ($12.50 → $75, short
+ctx only) under the Daybreak cyber program.*
+
+> **Context window — two numbers, both real.** On the **OpenAI API**, every current model page (`gpt-6-astra`,
+> `gpt-6-sol`, `gpt-6-luna`, `gpt-5.6-sol/terra/luna`) states a **1,050,000-token context window, 922,000 max
+> input, 128,000 max output**. The **272,000** figure in the 2026-08-08 Codex changelog is the **short-context pricing
+> boundary** (and the window Codex advertises for the 5.6 tiers under ChatGPT-plan sign-in), not the API window. The
+> Codex setting that costs money is `model_auto_compact_token_limit`: on API-key auth every request whose input
+> exceeds 272K is billed at the long-context rate (2x input, 1.5x output) for the whole request, so keep auto-compact
+> around 200K there. On ChatGPT-plan auth the per-token rate is moot and plan usage is the constraint.
+
+**Effort ladder:** `none → minimal → low → medium
 → high → xhigh → max`, plus **`ultra`** (subagent fan-out, a distinct axis, not deeper thinking;
 plan-gated). `reasoning.mode` is a second axis: `standard` (default) vs `pro` (more thorough).
 
-**vs Anthropic Fable 5** (`claude-fable-5`, ~$10 → $50): Sol is roughly half the price. They are not
+**vs Anthropic Fable 5.1** (`claude-fable-5-1`, $10 → $50): 5.6 Sol is well under half the price and GPT-6 Sol a fifth of it. They are not
 substitutes — Fable is Anthropic's *within-family* frontier/creative tier; Sol is the *outside-view*
 verifier. Reach for Sol to cross-check a Claude artifact, not to replace a Claude generator.
 
@@ -79,8 +108,8 @@ downstream of the same secondhand report.
 
 ## 4. Model + effort selection
 
-- **Model:** `sol` for judgment-heavy/long-context; `terra` for fast/light/mechanical or fan-out legs; `luna` only for defined-output extraction (never big-repo audits).
-- **Effort:** review/verification scans → `high`; hardest quality-first audits → `xhigh` (compare `max` only if measured better); mechanical/scoped → `medium`. Migrating from 5.5-era settings, test ONE level lower first — 5.6 often holds quality with fewer tokens.
+- **Model (GPT-6, 2026-09):** `gpt-6-sol` for verification / review / plan-hardening; `gpt-6-astra` when a review is the hardest judgment-heavy work and worth 5x the price; `gpt-6-sol` at `low` for fast / mechanical / fan-out legs; Luna only for defined-output extraction and web research (never big-repo audits). The 5.6 tiers are rollout fallbacks. Within the 5.6 family the shape was `sol` judgment-heavy, `terra` fast/mechanical, `luna` extraction.
+- **Effort:** OpenAI's recommended GPT-6 starting points are Sol `medium`, Luna `high`, Astra `low` — "reasoning efforts don't map exactly between model generations", so re-test a familiar task one level lower when you switch. Review/verification scans that come back thin → `high`; hardest quality-first audits → `xhigh` (compare `max` only if measured better); mechanical/scoped → `medium`. Migrating from 5.5-era settings, test ONE level lower first — 5.6 often holds quality with fewer tokens.
 - **Effort is a tuning knob, not a quality-recovery lever** (OpenAI's own words). If output is wrong, fix the prompt/output contract first; don't just crank effort.
 
 ---
@@ -133,7 +162,8 @@ script that forgets the override still cannot write.
   `exec` is non-interactive and already runs without prompting, so an approval flag is usually redundant.
   When you do need it explicitly, either put it in global position (`codex -a never exec …`) or pass it as
   config, which `exec` DOES accept (`-c approval_policy=never`). All three forms tested directly.
-  Deprecated: `--full-auto` (use explicit `--sandbox workspace-write`).
+  **Removed, not merely deprecated (Codex changelog, 2026-08-08): `codex exec --full-auto`.** Use
+  `--sandbox workspace-write`; a script still passing `--full-auto` now fails to parse.
   `--dangerously-bypass-approvals-and-sandbox` (`--yolo`) = neither.
 - **Network** is off even in `workspace-write`; enable via `[sandbox_workspace_write] network_access = true`,
   constrain with the `network_proxy` domain allow/deny feature (proxy alone grants nothing).
@@ -145,6 +175,8 @@ script that forgets the override still cannot write.
   dispatcher must define division of labor + join condition + output contract (same discipline as the research-wave dispatch pattern).
 - **Long runs (>~8 min) under the Claude Code harness:** the Bash tool caps at 10 min and can reap background
   jobs — use the skill's WMI-spawn scripts + the write-early (`STATUS: IN PROGRESS` first) protocol. Short runs: plain background is fine.
+- **Re-verified 2026-09-21 on the official non-interactive page:** `codex exec` still documents `--output-schema` plus `-o` for structured deliverables and prompt-plus-stdin piping (`npm test 2>&1 | codex exec "..."`); no flag removals since 2026-08-08 were found. A reported `--approve-for-me` flag stays unverified until it shows in `codex exec --help`.
+- **Model availability:** GPT-6 Sol / Luna appear in Codex "when available" to your plan and client — run a one-line smoke (`codex exec -m gpt-6-sol ... < /dev/null`) before relying on them. GPT-5.4 left Codex-with-ChatGPT sign-in on 2026-08-31 and **GPT-5.5 leaves it on 2026-10-14** (both stay on the API).
 
 ---
 
@@ -163,6 +195,8 @@ script that forgets the override still cannot write.
 - **Long agentic loops:** tag messages with `phase` (`commentary` vs `final_answer`) or use `previous_response_id`,
   so an intermediate preamble isn't mistaken for the final answer.
 - Leaner prompts reportedly outperform elaborate scaffolding (secondary sources cite ~+10-15% eval / −41-66% tokens — directional, unverified against a primary source).
+
+**GPT-6 Astra addendum (official prompt guidance, verified 2026-09-21).** Astra follows longer instructions better than the 5.6 family but is MORE sensitive to unclear or conflicting guidance in context: a skill file that contradicts the task can make it pause and block work early. State precedence explicitly (the official line: "The user's instructions take precedence over guidelines provided in a skill. If explicit user instructions conflict with a skill's instructions, prioritize the user's instructions."), and when a dispatch stalls, ask it to name and quote the exact instruction that caused the pause. API rules that also bite through Codex config: `reasoning_effort = "none"` returns 400 (start at `low` when migrating from `none`/`minimal`); `temperature`, `top_p` and `top_logprobs` are rejected; tool calling needs the Responses API; mid-conversation effort changes go through `configuration_update` items so the cached prefix survives.
 
 ---
 
@@ -223,6 +257,8 @@ Not mysticism about diversity — correlated-error statistics:
 - Single-operator production experience, 2026-07 — labeled anecdotal wherever cited.
 
 ---
+
+*Update 2026-09-23 — GPT-6 generation folded in, verified against the official developers.openai.com model pages, pricing page, reasoning guide and Codex models / non-interactive pages: GPT-6 Astra / Sol / Luna rows and the 5.6 re-pricing in §1; the 1.05M-window-vs-272K-billing-boundary clarification; `--full-auto` removal; the 5.4 / 5.5 Codex sign-in retirements; the Astra prompting addendum (§7); GPT-6 lane and effort guidance (§4); one measured Astra-vs-GPT-6-Sol head-to-head (header).*
 
 *Correction 2026-07-27 (§6, Codex CLI dispatch mechanics): the previously documented "canonical safe
 review combo" was `--sandbox read-only --ask-for-approval never`, which does not parse. `-a` /
