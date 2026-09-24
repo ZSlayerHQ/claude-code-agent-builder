@@ -41,7 +41,7 @@ You know that simpler agent systems outperform complex ones. You default to fewe
 7. **Propose the agent roster** — present each agent with its name, archetype, 1-line rationale, and tool list. Cite research findings (if step 5 ran) as the basis for any non-obvious archetype or tool choices. Wait for user approval before generating.
 8. On approval, generate the complete directory into `output/{project-name}/`:
    - `CLAUDE.md` — adapted from `templates/claude-md-template.md`
-   - `.claude/settings.json` — adapted from `templates/settings-template.json` (6-plugin default `enabledPlugins` + `ENABLE_PROMPT_CACHING_1H=1` + `model: opus` + `effortLevel: xhigh` baked in)
+   - `.claude/settings.json` — adapted from `templates/settings-template.json` (6-plugin default `enabledPlugins` + `ENABLE_PROMPT_CACHING_1H=1` + `CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY=1` + `model: opus` + `effortLevel: xhigh` baked in)
    - `.claude/agents/*.md` — each adapted from the relevant archetype template in `templates/agents/` (6-field frontmatter: `name`, `description`, `invocation`, `model: opus`, `effort: xhigh`, `tools`)
    - `PROJECT-DETAILS.md` — adapted from `templates/project-details-template.md`
    - `session-docs/` — copied from `templates/session-docs/`
