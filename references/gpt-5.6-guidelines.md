@@ -15,6 +15,9 @@ recipes, long-run spawn patterns, verdict schemas) lives in the `codex-dispatch`
 > read-only. Astra found the most real issues but ranked a false positive first (it miscounted a `../..` import
 > as unresolvable, which a read-only run cannot build to check); GPT-6 Sol found every core issue (one partially)
 > with zero false positives at about a fifth of Astra's cost. One run each: a data point, not a benchmark.
+> **2026-09-24:** a same-prompt web-research head-to-head (both at `xhigh` with `--search`) scored GPT-6 Luna 9.5 to
+> GPT-5.6 Luna 9.0 — no dead citations, ~30% fewer tokens at half the price, thinner on copy-ready detail — so
+> `gpt-6-luna` is now the research default.
 
 > **Sol is the outside view.** Consensus among Claude instances multiplies confidence, not truth —
 > a model family shares blind spots. A different family (GPT-5.6) is the independent check. That,
@@ -39,7 +42,7 @@ Sol/Terra/Luna persist across generations):
 | **`gpt-6-luna`** (2026-09) | GPT-6 fast tier — "focused, repeatable tasks": extraction, classification, structured summaries; `gpt-5.4-mini` → `gpt-6-luna` | effort up to `max`, **no Ultra**; 1.05M ctx; May 18 2026 cutoff | **$0.10 → $0.50; $0.20 → $0.75** (cached $0.01) |
 | **`gpt-5.6-sol`** (alias `gpt-5.6`) | Flagship (5.6) | rollout fallback for the Sol lane; best long-context of the 5.6 tiers | **$4 → $20; $8 → $30** (promo through at least 2026-11-21) |
 | `gpt-5.6-terra` | Mid | fast/light sweeps, subagent legs; "competitive with GPT-5.5" at lower cost. `gpt-6-sol` at `low` now covers this lane (same input and cached rates, cheaper output) | $2 → $12; $4 → $18 |
-| `gpt-5.6-luna` | Fast/cheap | extraction / classification / routing / high volume, and web research; **weak long-context, never big-repo audits** | $0.20 → $1.20; $0.40 → $1.80 |
+| `gpt-5.6-luna` | Fast/cheap | extraction / classification / routing / high volume; rollout fallback for web research since 2026-09-24 (`gpt-6-luna` is the default); **weak long-context, never big-repo audits** | $0.20 → $1.20; $0.40 → $1.80 |
 
 *Rates verified 2026-09-21/22 against the official developers.openai.com pricing page. **Pricing is two-tier by
 context length** (short vs long context columns). The 2026-07-30 cuts (Luna −80%, Terra −20%) are confirmed on the

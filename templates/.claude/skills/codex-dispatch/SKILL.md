@@ -40,8 +40,8 @@ fix for a bug that does not exist still passes review.
 | `gpt-6-sol` | DEFAULT for verification / review / audit. OpenAI's recommended Codex model. In one measured head-to-head (2026-09-23, same prompt, both at `medium`) it found every core issue, one partially, with zero false positives. | 2 / 10 |
 | `gpt-6-astra` | The hardest judgment-heavy reviews and sign-off audits. It found the most real issues in that head-to-head, but ranked a false positive first — verify any "this breaks the build" claim from a read-only run before acting on it. Rejects effort `none`, `temperature` and `top_p`. | 10 / 50 |
 | `gpt-6-sol` at `low` | Fast mechanical scans, lighter sweeps, subagent legs. There is no GPT-6 Terra. | 2 / 10 |
-| `gpt-5.6-luna` | Extraction / classification / transform with a well-defined "good result", and web research (the measured research default — see the recipe below). WEAK long-context — never for big-repo audits. | 0.20 / 1.20 |
-| `gpt-6-luna` | Documented successor to 5.6 Luna at half the price; effort up to `max`, no `ultra`. Not yet scored on research — switch the recipe once a scored rerun holds. | 0.10 / 0.50 |
+| `gpt-6-luna` | Extraction / classification / transform with a well-defined "good result", and web research (the measured research default since 2026-09-24 — see the recipe below). Effort up to `max`, no `ultra`. WEAK long-context — never for big-repo audits. | 0.10 / 0.50 |
+| `gpt-5.6-luna` | Rollout fallback for the Luna lane; gave more copy-ready depth but slightly lower accuracy in the 2026-09-24 research head-to-head. | 0.20 / 1.20 |
 | `gpt-5.6-sol` / `gpt-5.6-terra` | Rollout fallbacks when the account or client does not yet see GPT-6 Sol. | 4 / 20; 2 / 12 |
 
 All current models have a 1.05M-token API context window; 272K is the short-context **billing** boundary (requests
@@ -221,24 +221,32 @@ Format:
 ## Research dispatch recipe — Luna with live web search
 
 For WEB RESEARCH legs (best-practices surveys, fact-finding, source-cited reports) rather than repo
-work, `gpt-5.6-luna` at `xhigh` is the default: in a scored head-to-head against a Sonnet-class
-model it matched or beat it on both topics at a fraction of the cost, with authoritative sources and
-directly adoptable output. `gpt-6-luna` is its documented successor at half the price; switch the
-`-m` below once a scored rerun on your own research prompts holds.
+work, `gpt-6-luna` at `xhigh` is the default. In July, 5.6 Luna matched or beat a Sonnet-class
+model in a scored head-to-head at a fraction of the cost. On 2026-09-24, 6 Luna scored 9.5 to
+5.6 Luna's 9.0 on the same prompt: every cited page resolved, claims were better hedged, and it used
+about 30% fewer tokens at half the per-token price, but it was thinner on copy-ready detail. When a
+report must be copy-ready, ask for worked examples, code and a checklist in the prompt.
+`gpt-5.6-luna` is the fallback. (One run each and one judge: read it as "no regression".)
 
 The reliable shape — every element is load-bearing:
 
 ```bash
-codex --search exec -m gpt-5.6-luna -c model_reasoning_effort=xhigh \
-  --ephemeral --skip-git-repo-check \
+mkdir -p "$OUT/work" && cd "$OUT/work"
+codex --search exec -m gpt-6-luna -c model_reasoning_effort=xhigh \
+  --ephemeral --skip-git-repo-check --cd "$OUT/work" \
   -o "$OUT/report.md" - < "$OUT/prompt.md" > "$OUT/run.log" 2>&1 &
 ```
+
+- **Run from an EMPTY directory (`cd` there and pass `--cd`), never from a repo.** Launched from a
+  repo, the model treats the repo as the subject: a measured research leg started from a repo root
+  spent its first minute reading the repo's own files with zero web searches, and under a permissive
+  sandbox it can read anything there. Also say "web research; there is no local repository" in the prompt.
 
 - `--search` is a GLOBAL codex flag and must come BEFORE `exec` (after it is a hard "unexpected
   argument" error). It enables the native live `web_search` tool; without it Luna answers from
   training data while looking identical.
 - Prove the search is live, do not assume: `grep -c "web search:" run.log` within ~60s. A healthy
-  research run shows queries accumulating (20+ is typical).
+  research run shows queries accumulating (18-106 observed).
 - `-` with `< prompt.md` is stdin-as-prompt with stdin CLOSED (the gh-20919 hang guard); `-o` pins
   the deliverable harness-side; `--ephemeral --skip-git-repo-check` suit non-repo scratchpad runs.
 - Prompt shape: state the research question, the audience and use, a numbered coverage list, "lead
@@ -250,5 +258,5 @@ codex --search exec -m gpt-5.6-luna -c model_reasoning_effort=xhigh \
   model for big-repo audits.
 - `gpt-5.6-terra` at `high` scored comparably on research in the same head-to-head, but at 2.5x
   Luna's price for equal-at-best quality. Role summary: **GPT-6 Sol at `medium`** = verification
-  scans (Astra for the hardest sign-offs); **5.6 Luna at `xhigh` with `--search`** = web research;
+  scans (Astra for the hardest sign-offs); **6 Luna at `xhigh` with `--search`** = web research;
   **GPT-6 Sol at `low`** = light code sweeps.
