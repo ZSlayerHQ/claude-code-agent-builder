@@ -134,3 +134,23 @@ For per-project gotchas (in generated projects), see that project's own `session
 **Fix:** Any cross-system pass that edits a reference doc must diff against HEAD before writing, and a builder session must re-read its reference docs when they show as modified (G-002 applies: open the file). Before replacing a modified reference doc, read the *whole* uncommitted diff and carry forward every hunk that is a fact rather than a structural regression — "the header is old" does not mean the body is. For model sweeps, grep for the *set* of IDs (e.g. `claude-opus-4-8|claude-opus-5\b|claude-opus-5-5`) plus the prose forms (`Opus 5\b`), read a sample of the hits, and state what the pattern cannot see (agents with no `model:` field at all). A swept number is a hypothesis (`.claude/rules/01-identity.md`).
 
 **Incident:** 2026-09-22, Opus 5.5 launch day. Both failures were found while getting situated; the refresh then repeated the first one in the other direction by reading only part of a mixed diff and dropping newer facts, which a later session restored.
+
+## G-011 — A config sweep verified on disk is not shipped: check HEAD and the remote, not the working tree
+
+**Mistake mode:** A model-policy sweep edited every generated project's `.claude/settings.json` on disk and was "verified" by reading those files. But most of them already carried another tool's uncommitted edits, so the explicit-path commits left `settings.json` out.
+- On disk: every project ran the new model alias with no output cap.
+- Committed and pushed: 6 repos were still pinned to an older model, and 9 still carried the removed output-token cap.
+- Anyone cloning got the old config. Found two days later by diffing `git show HEAD:<file>` against disk.
+
+**Warning signs:**
+- A verification step reads files from the working tree when the claim is about what other machines receive.
+- `git status` shows the swept file as modified after the sweep "committed".
+- A file the sweep touched also carries another writer's uncommitted edits.
+
+**Fix:**
+- Verify the committed state with `git show HEAD:<path>` (or `origin/<branch>:<path>`), not `cat <path>`.
+- When the file has foreign uncommitted edits, don't skip it and don't sweep those edits into your commit. Build the new blob from HEAD, `git hash-object -w --no-filters`, then `git update-index --cacheinfo`, and commit with nothing else staged. That commits only your keys and leaves the other writer's edits in the working tree.
+- Watch repo commit hooks (commitlint subject length, lint-staged): a failed commit leaves your blob staged, so re-commit rather than re-running the whole sweep.
+- Hooks with absolute machine paths are a related portability defect. They belong in the per-machine, gitignored `.claude/settings.local.json`, not the shared `settings.json`.
+
+**Incident:** 2026-09-24. Found during a settings cleanup and fixed with HEAD-based commits in every affected repo.
