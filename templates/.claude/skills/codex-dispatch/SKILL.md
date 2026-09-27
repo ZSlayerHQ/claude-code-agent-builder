@@ -40,7 +40,7 @@ fix for a bug that does not exist still passes review.
 | `gpt-6-sol` | DEFAULT for verification / review / audit. OpenAI's recommended Codex model. In one measured head-to-head (2026-09-23, same prompt, both at `medium`) it found every core issue, one partially, with zero false positives. | 2 / 10 |
 | `gpt-6-astra` | The hardest judgment-heavy reviews and sign-off audits. It found the most real issues in that head-to-head, but ranked a false positive first — verify any "this breaks the build" claim from a read-only run before acting on it. Rejects effort `none`, `temperature` and `top_p`. | 10 / 50 |
 | `gpt-6-sol` at `low` | Fast mechanical scans, lighter sweeps, subagent legs. There is no GPT-6 Terra. | 2 / 10 |
-| `gpt-6-luna` | Extraction / classification / transform with a well-defined "good result", and web research (the measured research default since 2026-09-24 — see the recipe below). Effort up to `max`, no `ultra`. WEAK long-context — never for big-repo audits. | 0.10 / 0.50 |
+| `gpt-6-luna` | Extraction / classification / transform with a well-defined "good result", and web research (the measured research default since 2026-09-24 — see the recipe below). Effort up to `max`, no Ultra mode. WEAK long-context — never for big-repo audits. | 0.10 / 0.50 |
 | `gpt-5.6-luna` | Rollout fallback for the Luna lane; gave more copy-ready depth but slightly lower accuracy in the 2026-09-24 research head-to-head. | 0.20 / 1.20 |
 | `gpt-5.6-sol` / `gpt-5.6-terra` | Rollout fallbacks when the account or client does not yet see GPT-6 Sol. | 4 / 20; 2 / 12 |
 
@@ -48,10 +48,12 @@ All current models have a 1.05M-token API context window; 272K is the short-cont
 over it are billed at the long-context rate on API-key auth), not the window. GPT-6 models appear in Codex "when
 available" to your plan: run a one-line smoke (`codex exec -m gpt-6-sol "reply ok" < /dev/null`) before relying on one.
 
-Effort ladder: `none → low → medium → high → xhigh → max`, plus `ultra` (Codex-only: subagent
-fan-out, not deeper thinking; entitlement-gated). Official guidance:
+Effort ladder: `none → low → medium → high → xhigh → max`. **`ultra` is not an effort level:** Codex
+documents Ultra as a mode that fans work out to subagents (entitlement-gated; GPT-6 Luna has none). A
+community report says Astra in Ultra mode hung on one CLI release, so cap the runtime if you use it.
+Official guidance:
 
-- Use the LOWEST effort that produces the needed result; most tasks do not need `max` or `ultra`.
+- Use the LOWEST effort that produces the needed result; most tasks do not need `max` or Ultra mode.
 - Start from OpenAI's recommended points — GPT-6 Sol `medium`, Luna `high`, Astra `low` — and raise one level when a run comes back thin. Hardest quality-first audits: `xhigh`; compare `max` only if measured better.
 - Mechanical or tightly scoped sweeps: `gpt-6-sol` at `low` or `medium`.
 - Migrating between generations: test ONE LEVEL LOWER first — "reasoning efforts don't map exactly between model generations".
@@ -104,12 +106,29 @@ fan-out, not deeper thinking; entitlement-gated). Official guidance:
    silent process from t=0 is the stdin hang — kill it, fix stdin, retry. Retrying without fixing
    stdin hangs identically.
 7. **Multi-stage pipelines**: `codex exec resume --last "<follow-up>"` carries context across
-   analyse → verify → delta-check stages more cheaply than fresh runs.
+   analyse → verify → delta-check stages more cheaply than fresh runs. `resume --last` only finds
+   sessions started in the current directory, and `--ephemeral` runs cannot be resumed.
 8. Useful flags: `--skip-git-repo-check` (non-repo dirs), `--cd <path>`, `--ephemeral` (no session
    files), `-i img.png` (attach images).
 9. **Windows notes**: paths containing spaces can EPERM in-sandbox npm/node — instruct the prompt
    to fall back to static analysis and SAY SO in the report. If the CLI fails to launch via PATH,
    use the absolute codex binary path.
+
+### Codex CLI extras
+
+Checked 2026-09-26 against the Codex CLI reference and the AGENTS.md docs.
+
+- **Output:** progress goes to stderr and the final message to stdout. `-o` writes the file and still prints it.
+- **`web_search`** takes `disabled`, `cached`, `indexed` or `live`. The default is `cached` (an OpenAI index), but a
+  full-access sandbox defaults to `live`. For research, pass `--search` (live) and prove it in the log.
+- **Profiles:** `--profile review` layers `$CODEX_HOME/review.config.toml` (`model`, `model_reasoning_effort`,
+  `sandbox_mode`) on top of the config.
+- **Built-in review:** `codex exec review --uncommitted | --base <branch> | --commit <sha>`.
+- **Hermetic runs:** `--ignore-user-config` and `--ignore-rules`.
+- **`--output-schema`** takes the strict JSON-schema subset.
+- **CI:** scope `CODEX_API_KEY` to one call. `~/.codex/auth.json` is a secret.
+- **AGENTS.md:** read global first, then from the project root down to the working directory. One file per directory;
+  overrides win. 32 KiB cap (`project_doc_max_bytes`).
 
 ### Long runs (over ~8 minutes) on the Claude Code harness
 
@@ -141,7 +160,9 @@ fine.
 
 ## Prompt structure (official GPT-5.6 guidance — the canon)
 
-GPT-5.6 changed the rules from the 5 / 5.5 era. The measured finding: LEANER prompts score higher
+**GPT-6 guidance supersedes the 5.6 wording** (OpenAI, "Rethinking skills and prompts for GPT-6 Astra", September
+2026): soften boundary wording, say what "done" means, and on the API prefer `text.verbosity` over asking for brevity.
+The 5.6-era measurement still stands: LEANER prompts score higher
 (removing repeated instructions and examples improved evals 10-15% and cut tokens 41-66%). Write
 accordingly:
 
@@ -243,8 +264,9 @@ codex --search exec -m gpt-6-luna -c model_reasoning_effort=xhigh \
   sandbox it can read anything there. Also say "web research; there is no local repository" in the prompt.
 
 - `--search` is a GLOBAL codex flag and must come BEFORE `exec` (after it is a hard "unexpected
-  argument" error). It enables the native live `web_search` tool; without it Luna answers from
-  training data while looking identical.
+  argument" error). It enables the live `web_search` tool. Without it, Codex searches a cached OpenAI
+  index rather than the live web (search is live by default only under a `danger-full-access`
+  sandbox), so results can be stale while looking identical. Always pass `--search` for research.
 - Prove the search is live, do not assume: `grep -c "web search:" run.log` within ~60s. A healthy
   research run shows queries accumulating (18-106 observed).
 - `-` with `< prompt.md` is stdin-as-prompt with stdin CLOSED (the gh-20919 hang guard); `-o` pins

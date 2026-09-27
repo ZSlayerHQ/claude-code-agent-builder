@@ -61,8 +61,8 @@ ctx only) under the Daybreak cyber program.*
 > around 200K there. On ChatGPT-plan auth the per-token rate is moot and plan usage is the constraint.
 
 **Effort ladder:** `none → minimal → low → medium
-→ high → xhigh → max`, plus **`ultra`** (subagent fan-out, a distinct axis, not deeper thinking;
-plan-gated). `reasoning.mode` is a second axis: `standard` (default) vs `pro` (more thorough).
+→ high → xhigh → max`. **`ultra` is not an effort level:** Codex documents it as a mode that fans work
+out to subagents (plan-gated; GPT-6 Luna has none). `reasoning.mode` is a second axis: `standard` (default) vs `pro` (more thorough).
 
 **vs Anthropic Fable 5.1** (`claude-fable-5-1`, $10 → $50): 5.6 Sol is well under half the price and GPT-6 Sol a fifth of it. They are not
 substitutes — Fable is Anthropic's *within-family* frontier/creative tier; Sol is the *outside-view*
