@@ -17,7 +17,8 @@ recipes, long-run spawn patterns, verdict schemas) lives in the `codex-dispatch`
 > with zero false positives at about a fifth of Astra's cost. One run each: a data point, not a benchmark.
 > **2026-09-24:** a same-prompt web-research head-to-head (both at `xhigh` with `--search`) scored GPT-6 Luna 9.5 to
 > GPT-5.6 Luna 9.0 — no dead citations, ~30% fewer tokens at half the price, thinner on copy-ready detail — so
-> `gpt-6-luna` is now the research default.
+> `gpt-6-luna` is now the research default. **2026-09-29:** **GPT-6.1 Sol** (`gpt-6.1-sol`) became the default
+> verifier, at the same price as GPT-6 Sol, which stays as the fallback. It is not yet measured head-to-head.
 
 > **Sol is the outside view.** Consensus among Claude instances multiplies confidence, not truth —
 > a model family shares blind spots. A different family (GPT-5.6) is the independent check. That,
@@ -38,10 +39,11 @@ Sol/Terra/Luna persist across generations):
 | Model (API id) | Tier | Best for | Cost /1M in → out (short ctx; long ctx)* |
 |---|---|---|---|
 | **`gpt-6-astra`** | Next-gen flagship (GA on the API 2026-09-03) | the hardest judgment-heavy reviews and sign-off audits; tool calling only through the Responses API; `none` effort returns 400 | **$10 → $50; $20 → $75** (cached $1.00; cache writes $12.50; Fast mode 2x, none with EU data residency) |
-| **`gpt-6-sol`** (2026-09) | GPT-6 mid tier — OpenAI's recommended Codex default ("complex coding and agentic workflows"; `gpt-5.4` → `gpt-6-sol` is the documented migration) | the default verifier lane; at `low`, mechanical / fan-out legs (there is no GPT-6 Terra). Effort `none`–`max` (default `medium`); 1.05M ctx / 922K in / 128K out; Apr 20 2026 cutoff; Chat Completions tool calling only at `none` | **$2 → $10; $4 → $15** (cached $0.20; cache writes $2.50) |
+| **`gpt-6.1-sol`** (2026-09) | GPT-6.1 mid tier — OpenAI positions it as near-Astra on complex work at Sol's price | the default verifier lane since 2026-09-29; at `low`, mechanical / fan-out legs. Effort `low`–`max` (default `medium`; **`none` and `minimal` rejected**); 1.05M ctx / 128K out; Apr 30 2026 cutoff; Codex CLI 0.159 or later on ChatGPT-account sign-in | **$2 → $10; long ctx 2x in / 1.5x out** (cached $0.10; cache writes $2.50) |
+| **`gpt-6-sol`** (2026-09) | GPT-6 mid tier — OpenAI's recommended Codex default ("complex coding and agentic workflows"; `gpt-5.4` → `gpt-6-sol` is the documented migration) | the fallback for the Sol lane (the default 2026-09-23 → 09-29; there is no GPT-6 Terra). Effort `none`–`max` (default `medium`); 1.05M ctx / 922K in / 128K out; Apr 20 2026 cutoff; Chat Completions tool calling only at `none` | **$2 → $10; $4 → $15** (cached $0.20; cache writes $2.50) |
 | **`gpt-6-luna`** (2026-09) | GPT-6 fast tier — "focused, repeatable tasks": extraction, classification, structured summaries; `gpt-5.4-mini` → `gpt-6-luna` | effort up to `max`, **no Ultra**; 1.05M ctx; May 18 2026 cutoff | **$0.10 → $0.50; $0.20 → $0.75** (cached $0.01) |
 | **`gpt-5.6-sol`** (alias `gpt-5.6`) | Flagship (5.6) | rollout fallback for the Sol lane; best long-context of the 5.6 tiers | **$4 → $20; $8 → $30** (promo through at least 2026-11-21) |
-| `gpt-5.6-terra` | Mid | fast/light sweeps, subagent legs; "competitive with GPT-5.5" at lower cost. `gpt-6-sol` at `low` now covers this lane (same input and cached rates, cheaper output) | $2 → $12; $4 → $18 |
+| `gpt-5.6-terra` | Mid | fast/light sweeps, subagent legs; "competitive with GPT-5.5" at lower cost. `gpt-6.1-sol` at `low` now covers this lane (same input and cached rates, cheaper output) | $2 → $12; $4 → $18 |
 | `gpt-5.6-luna` | Fast/cheap | extraction / classification / routing / high volume; rollout fallback for web research since 2026-09-24 (`gpt-6-luna` is the default); **weak long-context, never big-repo audits** | $0.20 → $1.20; $0.40 → $1.80 |
 
 *Rates verified 2026-09-21/22 against the official developers.openai.com pricing page. **Pricing is two-tier by
@@ -111,7 +113,7 @@ downstream of the same secondhand report.
 
 ## 4. Model + effort selection
 
-- **Model (GPT-6, 2026-09):** `gpt-6-sol` for verification / review / plan-hardening; `gpt-6-astra` when a review is the hardest judgment-heavy work and worth 5x the price; `gpt-6-sol` at `low` for fast / mechanical / fan-out legs; Luna only for defined-output extraction and web research (never big-repo audits). The 5.6 tiers are rollout fallbacks. Within the 5.6 family the shape was `sol` judgment-heavy, `terra` fast/mechanical, `luna` extraction.
+- **Model (GPT-6, 2026-09):** `gpt-6.1-sol` for verification / review / plan-hardening (since 2026-09-29; `gpt-6-sol` as fallback); `gpt-6-astra` when a review is the hardest judgment-heavy work and worth 5x the price; `gpt-6-sol` at `low` for fast / mechanical / fan-out legs; Luna only for defined-output extraction and web research (never big-repo audits). The 5.6 tiers are rollout fallbacks. Within the 5.6 family the shape was `sol` judgment-heavy, `terra` fast/mechanical, `luna` extraction.
 - **Effort:** OpenAI's recommended GPT-6 starting points are Sol `medium`, Luna `high`, Astra `low` — "reasoning efforts don't map exactly between model generations", so re-test a familiar task one level lower when you switch. Review/verification scans that come back thin → `high`; hardest quality-first audits → `xhigh` (compare `max` only if measured better); mechanical/scoped → `medium`. Migrating from 5.5-era settings, test ONE level lower first — 5.6 often holds quality with fewer tokens.
 - **Effort is a tuning knob, not a quality-recovery lever** (OpenAI's own words). If output is wrong, fix the prompt/output contract first; don't just crank effort.
 
@@ -179,7 +181,7 @@ script that forgets the override still cannot write.
 - **Long runs (>~8 min) under the Claude Code harness:** the Bash tool caps at 10 min and can reap background
   jobs — use the skill's WMI-spawn scripts + the write-early (`STATUS: IN PROGRESS` first) protocol. Short runs: plain background is fine.
 - **Re-verified 2026-09-21 on the official non-interactive page:** `codex exec` still documents `--output-schema` plus `-o` for structured deliverables and prompt-plus-stdin piping (`npm test 2>&1 | codex exec "..."`); no flag removals since 2026-08-08 were found. A reported `--approve-for-me` flag stays unverified until it shows in `codex exec --help`.
-- **Model availability:** GPT-6 Sol / Luna appear in Codex "when available" to your plan and client — run a one-line smoke (`codex exec -m gpt-6-sol ... < /dev/null`) before relying on them. GPT-5.4 left Codex-with-ChatGPT sign-in on 2026-08-31 and **GPT-5.5 leaves it on 2026-10-14** (both stay on the API).
+- **Model availability:** GPT-6 Sol / Luna appear in Codex "when available" to your plan and client — run a one-line smoke (`codex exec -m gpt-6.1-sol ... < /dev/null`; 6.1 Sol needs Codex CLI 0.159 or later on ChatGPT-account sign-in) before relying on them. GPT-5.4 left Codex-with-ChatGPT sign-in on 2026-08-31 and **GPT-5.5 leaves it on 2026-10-14** (both stay on the API).
 
 ---
 

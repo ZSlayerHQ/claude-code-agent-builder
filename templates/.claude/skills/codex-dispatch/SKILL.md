@@ -1,6 +1,6 @@
 ---
 name: codex-dispatch
-description: Dispatch OpenAI Codex CLI (GPT-6 Sol default, Astra for the hardest reviews, Luna for research) as an independent verifier or diagnostic sub-agent. Use when a shipped change needs an independent post-ship scan, a plan needs an adversarial pre-build review, a cross-cutting sweep (contract/consumer/residue audit) is needed, or a medium-to-large change wants a second-opinion read from a non-Claude model family. Covers model/effort selection, hardened headless exec dispatch, and the official GPT-5.6 / GPT-6 prompt structure.
+description: Dispatch OpenAI Codex CLI (GPT-6.1 Sol default with GPT-6 Sol as fallback, Astra for the hardest reviews, Luna for research) as an independent verifier or diagnostic sub-agent. Use when a shipped change needs an independent post-ship scan, a plan needs an adversarial pre-build review, a cross-cutting sweep (contract/consumer/residue audit) is needed, or a medium-to-large change wants a second-opinion read from a non-Claude model family. Covers model/effort selection, hardened headless exec dispatch, and the official GPT-5.6 / GPT-6 prompt structure.
 ---
 
 # Codex Dispatch
@@ -37,27 +37,28 @@ fix for a bug that does not exist still passes review.
 
 | Model | Use for | USD per M in / out |
 |---|---|---|
-| `gpt-6-sol` | DEFAULT for verification / review / audit. OpenAI's recommended Codex model. In one measured head-to-head (2026-09-23, same prompt, both at `medium`) it found every core issue, one partially, with zero false positives. | 2 / 10 |
+| `gpt-6.1-sol` | DEFAULT for verification / review / audit (since 2026-09-29). OpenAI positions it as near-Astra on complex work at Sol's price. Its lowest effort is `low`: it rejects `none` and `minimal`. Cached input 0.10. Needs Codex CLI 0.159 or later on ChatGPT-account sign-in (0.156 returns HTTP 400 "not supported"); update the CLI before concluding your plan lacks it. | 2 / 10 |
+| `gpt-6-sol` | Fallback for the Sol lane. In one measured head-to-head (2026-09-23, same prompt, both at `medium`) it found every core issue, one partially, with zero false positives. | 2 / 10 |
 | `gpt-6-astra` | The hardest judgment-heavy reviews and sign-off audits. It found the most real issues in that head-to-head, but ranked a false positive first — verify any "this breaks the build" claim from a read-only run before acting on it. Rejects effort `none`, `temperature` and `top_p`. | 10 / 50 |
-| `gpt-6-sol` at `low` | Fast mechanical scans, lighter sweeps, subagent legs. There is no GPT-6 Terra. | 2 / 10 |
+| `gpt-6.1-sol` at `low` | Fast mechanical scans, lighter sweeps, subagent legs (`gpt-6-sol` at `low` as fallback). There is no GPT-6 Terra. | 2 / 10 |
 | `gpt-6-luna` | Extraction / classification / transform with a well-defined "good result", and web research (the measured research default since 2026-09-24 — see the recipe below). Effort up to `max`, no Ultra mode. WEAK long-context — never for big-repo audits. | 0.10 / 0.50 |
 | `gpt-5.6-luna` | Rollout fallback for the Luna lane; gave more copy-ready depth but slightly lower accuracy in the 2026-09-24 research head-to-head. | 0.20 / 1.20 |
-| `gpt-5.6-sol` / `gpt-5.6-terra` | Rollout fallbacks when the account or client does not yet see GPT-6 Sol. | 4 / 20; 2 / 12 |
+| `gpt-5.6-sol` / `gpt-5.6-terra` | Last-resort fallbacks when the account or client sees neither GPT-6.1 Sol nor GPT-6 Sol. | 4 / 20; 2 / 12 |
 
 All current models have a 1.05M-token API context window; 272K is the short-context **billing** boundary (requests
 over it are billed at the long-context rate on API-key auth), not the window. GPT-6 models appear in Codex "when
-available" to your plan: run a one-line smoke (`codex exec -m gpt-6-sol "reply ok" < /dev/null`) before relying on one.
+available" to your plan: run a one-line smoke (`codex exec -m gpt-6.1-sol "reply ok" < /dev/null`) before relying on one.
 
-Effort ladder: `none → low → medium → high → xhigh → max`. **`ultra` is not an effort level:** Codex
+Effort ladder: `none → low → medium → high → xhigh → max` (`none` is Sol / Terra / Luna of 5.6 and 6 only; Astra and 6.1 Sol reject it). **`ultra` is not an effort level:** Codex
 documents Ultra as a mode that fans work out to subagents (entitlement-gated; GPT-6 Luna has none). A
 community report says Astra in Ultra mode hung on one CLI release, so cap the runtime if you use it.
 Official guidance:
 
 - Use the LOWEST effort that produces the needed result; most tasks do not need `max` or Ultra mode.
-- Start from OpenAI's recommended points — GPT-6 Sol `medium`, Luna `high`, Astra `low` — and raise one level when a run comes back thin. Hardest quality-first audits: `xhigh`; compare `max` only if measured better.
-- Mechanical or tightly scoped sweeps: `gpt-6-sol` at `low` or `medium`.
+- Start from OpenAI's recommended points — Sol `medium` (GPT-6.1 Sol's default too), Luna `high`, Astra `low` — and raise one level when a run comes back thin. Hardest quality-first audits: `xhigh`; compare `max` only if measured better.
+- Mechanical or tightly scoped sweeps: `gpt-6.1-sol` at `low` or `medium`.
 - Migrating between generations: test ONE LEVEL LOWER first — "reasoning efforts don't map exactly between model generations".
-- Per-run override without touching config: `codex exec -m gpt-6-sol -c model_reasoning_effort=low ...`
+- Per-run override without touching config: `codex exec -m gpt-6.1-sol -c model_reasoning_effort=low ...`
 
 ## Dispatch mechanics (hardened)
 
@@ -94,7 +95,7 @@ Official guidance:
    When you do need one, use global position (`codex -a never exec …`) or config
    (`-c approval_policy=never`, which `exec` does accept). Canonical safe review combo:
    ```bash
-   codex exec -s read-only -m gpt-6-sol -c model_reasoning_effort=medium -o out.md - < prompt.md
+   codex exec -s read-only -m gpt-6.1-sol -c model_reasoning_effort=medium -o out.md - < prompt.md
    ```
    `--full-auto` was REMOVED (Codex changelog, 2026-08-08) and now fails to parse; use an explicit
    `--sandbox workspace-write`.
@@ -279,6 +280,6 @@ codex --search exec -m gpt-6-luna -c model_reasoning_effort=xhigh \
 - Luna's long-context weakness does not bite here (fresh context, web-fed); it remains the wrong
   model for big-repo audits.
 - `gpt-5.6-terra` at `high` scored comparably on research in the same head-to-head, but at 2.5x
-  Luna's price for equal-at-best quality. Role summary: **GPT-6 Sol at `medium`** = verification
+  Luna's price for equal-at-best quality. Role summary: **GPT-6.1 Sol at `medium`** = verification
   scans (Astra for the hardest sign-offs); **6 Luna at `xhigh` with `--search`** = web research;
-  **GPT-6 Sol at `low`** = light code sweeps.
+  **GPT-6.1 Sol at `low`** = light code sweeps.
