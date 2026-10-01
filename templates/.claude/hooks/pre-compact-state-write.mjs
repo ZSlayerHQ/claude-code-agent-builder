@@ -48,13 +48,18 @@ const recentRaw = safeExec('git log --name-only --pretty=format: -5') || '';
 const recentFiles = [...new Set(recentRaw.split('\n').filter((l) => l.trim()))].slice(0, 5);
 const timestamp = new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
 
-// Preserve narrative sections from existing STATE.md (if any)
+// Preserve narrative sections from existing STATE.md (if any). A non-empty STATE.md with no "## Invariants"
+// heading was written in its own format (a project that adopted these hooks later): it is never rewritten,
+// because keeping only the text from "## Invariants" onwards would replace the whole file with the fallback.
 let narrative = '';
+let customFormat = false;
 if (existsSync(stateFile)) {
   const existing = readFileSync(stateFile, 'utf-8');
   const narrativeStart = existing.indexOf('## Invariants');
   if (narrativeStart !== -1) {
     narrative = existing.slice(narrativeStart);
+  } else if (existing.trim()) {
+    customFormat = true;
   }
 }
 
@@ -110,15 +115,21 @@ const header = `# STATE.md — Current Session State
 
 `;
 
-// Ensure session-docs/ directory exists
-mkdirSync(dirname(stateFile), { recursive: true });
-writeFileSync(stateFile, header + (narrative || fallbackNarrative));
+const gitState = `branch ${branch}, last commit ${lastCommit}, ${dirty} dirty files`;
+
+if (!customFormat) {
+  // Ensure session-docs/ directory exists
+  mkdirSync(dirname(stateFile), { recursive: true });
+  writeFileSync(stateFile, header + (narrative || fallbackNarrative));
+}
 
 // Inject context for the AI to update narrative sections
 const output = {
   hookSpecificOutput: {
     hookEventName: 'PreCompact',
-    additionalContext: `Context is being compacted. session-docs/STATE.md has been auto-updated with current git state (branch ${branch}, last commit ${lastCommit}, ${dirty} dirty files). Before any further work, update the narrative sections (Invariants, Active work, Last verified state, Open assumptions, Active hazards) of STATE.md to reflect what was learnt in this session. Overwrite the narrative sections — do not append. Old narrative state lives in SESSION-LOG.md if needed historically.`,
+    additionalContext: customFormat
+      ? `Context is being compacted. session-docs/STATE.md uses its own format (no "## Invariants" section), so this hook left it untouched. Current git state: ${gitState}. Before any further work, update STATE.md by hand to reflect the current state and what was learnt in this session.`
+      : `Context is being compacted. session-docs/STATE.md has been auto-updated with current git state (${gitState}). Before any further work, update the narrative sections (Invariants, Active work, Last verified state, Open assumptions, Active hazards) of STATE.md to reflect what was learnt in this session. Overwrite the narrative sections — do not append. Old narrative state lives in SESSION-LOG.md if needed historically.`,
   },
 };
 process.stdout.write(JSON.stringify(output));
