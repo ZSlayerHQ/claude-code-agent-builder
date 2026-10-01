@@ -16,7 +16,7 @@ Every generated agent file follows this exact section order:
    ---
    ```
 
-   `model: opus` is the Claude Code alias (resolves to the current recommended Opus — Opus 5.5 on Claude Code ≥ 2.1.280); `effort: xhigh` is pinned explicitly so an alias flip cannot silently change it (CLAUDE.md Output Rule 3). Opus 5.5's own default effort is `medium`, so `xhigh` is a deliberate step-up for long-horizon agentic work, and Anthropic advises re-running the effort choice per model generation rather than carrying settings over. Override per-agent only when the project has a specific reason (latency-critical hot paths can downgrade to `model: claude-haiku-4-5-20251001` + `effort: medium`; a project that needs reproducibility over currency pins the full ID `claude-opus-5-5`).
+   `model: opus` is the Claude Code alias (resolves to the current recommended Opus — Opus 5.5 on Claude Code ≥ 2.1.280); `effort: xhigh` is pinned explicitly so an alias flip cannot silently change it (CLAUDE.md Output Rule 3). Opus 5.5's own default effort is `medium`, so `xhigh` is a deliberate step-up for long-horizon agentic work, and Anthropic advises re-running the effort choice per model generation rather than carrying settings over. Override per-agent only when the project has a specific reason (latency-critical hot paths can downgrade to `model: claude-haiku-4-5-20251001`, where the `effort` field has no effect because Haiku 4.5 doesn't support effort (check the deprecations page first: no deprecation is announced, but its retirement commitment runs out soonest, not sooner than 2026-10-15); a project that needs reproducibility over currency pins the full ID `claude-opus-5-5`).
 
 2. **# Agent Title** — matches the `name` field
 

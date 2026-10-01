@@ -81,7 +81,7 @@ See `CLAUDE.md` for the full flow of each mode.
 
 ## Versioning
 
-This repo follows the Claude model generation it targets. Current target: **Opus 5.5** (with Fable 5.1 / Sonnet 5 / Haiku 4.5 as the surrounding current generation). Templates use the `opus` alias rather than a pinned ID, so generated projects move to a new Opus with a Claude Code update; effort stays pinned at `xhigh` because each new model can ship a different default. When Anthropic ships a new generation, the relevant reference docs are updated.
+This repo follows the Claude model generation it targets. Current target: **Opus 5.5** (with Fable 5.1 / Sonnet 5.5 / Haiku 4.5 as the surrounding current generation). Templates use the `opus` alias rather than a pinned ID, so generated projects move to a new Opus with a Claude Code update; effort stays pinned at `xhigh` because each new model can ship a different default. When Anthropic ships a new generation, the relevant reference docs are updated.
 
 ## Contributing
 

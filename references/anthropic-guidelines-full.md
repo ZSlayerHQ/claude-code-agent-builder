@@ -8,11 +8,11 @@ A deep reference for agentic Claude Code sessions. Grounded in Anthropic's offic
 
 ## 1. Model Overview
 
-### Current Models (2026-09-22)
+### Current Models (2026-10-01)
 
-| | Fable 5.1 | **Opus 5.5** | Sonnet 5 | Haiku 4.5 |
+| | Fable 5.1 | **Opus 5.5** | Sonnet 5.5 | Haiku 4.5 |
 |---|---|---|---|---|
-| **Model ID** | `claude-fable-5-1` | **`claude-opus-5-5`** | `claude-sonnet-5` | `claude-haiku-4-5-20251001` |
+| **Model ID** | `claude-fable-5-1` | **`claude-opus-5-5`** | `claude-sonnet-5-5` | `claude-haiku-4-5-20251001` |
 | **Best for** | Demanding reasoning + long-horizon agentic work; when Opus 5.5 at higher effort still falls short on your evals | **Long-running agentic coding + knowledge work — Anthropic's "start here" for most workloads** | Best speed/intelligence balance | Fastest, near-frontier |
 | **Context window** | 1M (default *and* max) | 1M (default *and* max) | 1M | 200K |
 | **Max output** | 128K | 128K (300K via Batch, beta) | 128K | 64K |
@@ -21,12 +21,13 @@ A deep reference for agentic Claude Code sessions. Grounded in Anthropic's offic
 | **Cache read** | $0.25 (0.025× base) | $0.20 (0.05× base) | 0.1× base | 0.1× base |
 | **Thinking** | Adaptive, **always on** | Adaptive, **always on** (cannot be disabled) | Adaptive | Extended (`budget_tokens`) only |
 | **Default effort** | `high` | **`medium`** | `high` | — |
-| **Reliable knowledge cutoff** | Jun 2026 | **Jun 2026** | Jan 2026 | Feb 2025 |
+| **Reliable knowledge cutoff** | Jun 2026 | **Jun 2026** | Jun 2026 | Feb 2025 |
 | **Latency** | Slower | Moderate | Fast | Fastest |
+| **Retirement (not sooner than)** | 2027-09-01 | 2027-09-22 | 2027-09-28 | **2026-10-15** |
 
-*Model IDs from the 4.6 generation onward are dateless but still **pinned snapshots**, not evergreen pointers. `claude-opus-5-5` is a fixed ID with no date suffix, same scheme as `claude-opus-5`. Sonnet 5's $2 / $10 "intro" price (originally through 2026-08-31) was made permanent.*
+*Model IDs from the 4.6 generation onward are dateless but still **pinned snapshots**, not evergreen pointers. `claude-opus-5-5` is a fixed ID with no date suffix, same scheme as `claude-opus-5`. Sonnet 5.5 (released 2026-09-28) keeps Sonnet 5's $2 / $10, whose "intro" price (originally through 2026-08-31) was made permanent. **Haiku 4.5 has no deprecation announced and no named successor**, but its retirement commitment runs out soonest (not sooner than 2026-10-15): a project that pins `claude-haiku-4-5-20251001` for a hot path should watch the deprecations page.*
 
-**Previous generation, still served (migrate when convenient):** Opus 5 (`claude-opus-5`, $5 / $25, default effort `high`, May 2026 cutoff — no deprecation announced), Fable 5 (`claude-fable-5`, $10 / $50), Opus 4.8 / 4.7 / 4.6 ($5 / $25), Sonnet 4.6 / 4.5, Opus 4.5. **Opus 4.1 retired 2026-08-05** — any surviving `claude-opus-4-1` pin is now a hard failure, not a downgrade.
+**Previous generation, still served (migrate when convenient):** Sonnet 5 (`claude-sonnet-5`, $2 / $10, Jan 2026 cutoff, retirement not sooner than 2027-06-30), Opus 5 (`claude-opus-5`, $5 / $25, default effort `high`, May 2026 cutoff — no deprecation announced), Fable 5 (`claude-fable-5`, $10 / $50), Opus 4.8 / 4.7 / 4.6 ($5 / $25), Sonnet 4.6 / 4.5, Opus 4.5. **Opus 4.1 retired 2026-08-05** — any surviving `claude-opus-4-1` pin is now a hard failure, not a downgrade.
 
 **Claude Mythos 5.1** (`claude-mythos-5-1`) shares Fable 5.1's specs and pricing (successor to Mythos 5) but is **invitation-only** under Project Glasswing, offered for defensive cybersecurity workflows. It is *not* "Fable without the safety measures" — it runs safeguards that depend on the access program. No self-serve access.
 
@@ -35,8 +36,20 @@ A deep reference for agentic Claude Code sessions. Grounded in Anthropic's offic
 - **Opus 5.5**: The default for agentic coding and long-horizon work — multi-file features, larger refactors, multi-hour audits and migrations, code review, knowledge work (financial models, decks, documents). Anthropic's own "start here if unsure" pick. In Anthropic's testing it **matched or beat Opus 5 at `high` while running at its default `medium`**, in fewer steps and with fewer tokens; output tokens generate >30% faster. Still performs best given the **complete task specification up front and then left to run**.
 - **Fable 5.1**: Demanding reasoning and the longest-horizon agentic work, or when Opus 5.5 at higher effort still falls short on your evals. 2.5× the price. In Claude Code, the `fable` / `best` aliases resolve here.
 - **Opus 5**: Superseded but still served, at a *higher* price than 5.5. No reason to choose it for new work; the only migration cost is the four breaking changes below.
-- **Sonnet 5**: Everyday coding and agent workflows where turnaround and cost matter. Defaults to `high` effort; step down to `medium`/`low` for volume.
+- **Sonnet 5.5**: Everyday coding and agent workflows where turnaround and cost matter — "the best combination of speed and intelligence", at a fifth of Fable's price and half of Opus 5.5's. API default effort `high` (Claude Code runs it at `medium` by default); step down for volume. Replaces Sonnet 5 at the same price; see the migration notes below.
 - **Haiku 4.5**: Codebase exploration (Claude Code's built-in Explore subagent uses it), classification, simple lookups, bulk operations, latency-critical hot paths.
+
+### Sonnet 5.5 — what changed from Sonnet 5 (released 2026-09-28)
+
+Same price ($2 / $10; cache reads $0.20), same 1M context and 128K output, knowledge cutoff moves to Jun 2026. Anthropic lists **five breaking changes for code already running on Sonnet 5**, plus one response-shape change (sonnet-5-5 overview, verified 2026-10-01):
+- Up-front thinking is turned off with `between_tools`.
+- Forced tool use returns an error.
+- Thinking blocks are tied to the model and the conversation (pass them back unmodified; never across models).
+- On the Claude API and Google Cloud, the earlier `computer_20251124` computer-use tool is not accepted.
+- The advisor tool rejects Claude Opus 4.8, Claude Opus 4.7 and Claude Sonnet 5 as advisors.
+- **Response shape:** text between tool calls now comes back in `thinking` blocks. An app that streams that text to users goes quiet between tool calls until it sets a `display` value that returns the text, or turns off up-front thinking with `between_tools`.
+
+**In Claude Code:** `sonnet` resolves to Sonnet 5.5 on the Anthropic API from **v2.1.284** (Sonnet 5.5 needs v2.1.284+; other providers keep older Sonnets — Claude Platform on AWS Sonnet 4.6, Bedrock / Agent Platform / Foundry Sonnet 4.5). Claude Code defaults it to `medium` effort, its thinking cannot be turned off there, and it runs with safety classifiers: a cybersecurity-flagged request re-runs on Sonnet 5, a biology-flagged one ends in a refusal (no biology fallback).
 
 ### Opus 5.5 — what changed from Opus 5
 
@@ -100,10 +113,10 @@ Full ladder: `low` / `medium` / `high` / `xhigh` / `max`. Effort is a behavioura
 - **Opus 5.5** — *start at `medium`, set it explicitly*, and test several levels. Step up to `xhigh` / `max` only where you have **measured** a quality gain; lower effort first when you want less thinking (it cuts thinking, cost, and latency more reliably than prompt instructions). **Do not carry Opus 5 effort settings over — re-run the sweep.** At `xhigh` / `max`, set `max_tokens` large (128K has worked well).
 - **Opus 5** — start at `high`; `xhigh` for demanding coding/agentic work.
 - **Opus 4.8 / 4.7** — start at `xhigh` for coding and agentic work, `high` otherwise.
-- **Sonnet 5** — defaults to `high`; `xhigh` for the hardest coding/agentic tasks.
+- **Sonnet 5.5** — API default `high` (Claude Code: `medium`); `xhigh` for the hardest coding/agentic tasks. Sonnet 5 defaulted to `high` as well.
 - **Fable 5.1 / Fable 5 / Mythos 5.1** — start at `high`; `xhigh` for the most capability-sensitive work. Lower settings still often beat `xhigh` on prior models.
 
-> **Session vs. API code — do not confuse them.** Everything above is about calls *your code* makes to the Anthropic API, where `max_tokens`, `effort`, and `thinking` are yours to tune against a cost budget. **Inside a Claude Code session, thinking stays on and output tokens are not shaved.** (On Opus 5.5 and the Fable models it *cannot* be turned off — the session toggle, `alwaysThinkingEnabled`, and `MAX_THINKING_TOKENS=0` have no effect.) The session exists to do the reasoning; trimming `CLAUDE_CODE_MAX_OUTPUT_TOKENS` to save cost trades away the thing you are paying for. That env var is a runaway-output ceiling, not a budget dial — Claude Code sizes the default per model and falls back to 32,000 only for model IDs it doesn't recognise, so leave it unset unless you have a specific reason. Cost control for sessions is scope and context discipline, not throttling the model mid-task. Effort *is* a legitimate session dial: Claude Code resolves it as `CLAUDE_CODE_EFFORT_LEVEL` env → `--effort` / `/effort` → saved `modelSettings` / `effortLevel` → the model default (`high` everywhere, `medium` on Opus 5.5, `xhigh` on Opus 4.7). Note `effortLevel` / `modelSettings` accept `low`–`xhigh` only — `max` is env/flag-only.
+> **Session vs. API code — do not confuse them.** Everything above is about calls *your code* makes to the Anthropic API, where `max_tokens`, `effort`, and `thinking` are yours to tune against a cost budget. **Inside a Claude Code session, thinking stays on and output tokens are not shaved.** (On Opus 5.5, Sonnet 5.5 and the Fable models it *cannot* be turned off — the session toggle, `alwaysThinkingEnabled`, and `MAX_THINKING_TOKENS=0` have no effect.) The session exists to do the reasoning; trimming `CLAUDE_CODE_MAX_OUTPUT_TOKENS` to save cost trades away the thing you are paying for. That env var is a runaway-output ceiling, not a budget dial — Claude Code sizes the default per model and falls back to 32,000 only for model IDs it doesn't recognise, so leave it unset unless you have a specific reason. Cost control for sessions is scope and context discipline, not throttling the model mid-task. Effort *is* a legitimate session dial: Claude Code resolves it as `CLAUDE_CODE_EFFORT_LEVEL` env → `--effort` / `/effort` → saved `modelSettings` / `effortLevel` → the model default (`high` everywhere, `medium` on Opus 5.5 and Sonnet 5.5, `xhigh` on Opus 4.7). Note `effortLevel` / `modelSettings` accept `low`–`xhigh` only — `max` is env/flag-only.
 
 > **Agent-builder note.** Generated agents pin `effort: xhigh` by default, and every generated `settings.json` sets `effortLevel: xhigh`. On Opus 5.5 that pin is now **two** steps above the model default and buys more thinking per turn than the same word bought on Opus 5. It remains the operator's deliberate choice for long-horizon builder / reviewer work (the session exists to reason) — but it is a choice, not the neutral setting, and Anthropic's guidance is that `xhigh` / `max` should be justified by a measured gain. Consider `medium` for narrow, mechanical agents and `low` for subagent legs.
 
@@ -245,8 +258,8 @@ Positive examples of the communication style you want beat instructions about wh
 
 ### Token Budgets
 
-- **1M tokens** context for Fable 5.x, Opus 5.x, Opus 4.x and Sonnet 5 (about 750K words). On Opus 5.5 / Opus 5 / Fable 5.x, 1M is both the default and the maximum — there is no smaller context variant to opt out to.
-- **128K max output** for Fable 5.x, Opus 5.x, Opus 4.x and Sonnet 5; **64K** for Haiku 4.5.
+- **1M tokens** context for Fable 5.x, Opus 5.x, Opus 4.x, Sonnet 5.5 and Sonnet 5 (about 555K words on the current tokenizer; about 750K on models before Opus 4.7). On Opus 5.5 / Opus 5 / Fable 5.x, 1M is both the default and the maximum — there is no smaller context variant to opt out to.
+- **128K max output** for Fable 5.x, Opus 5.x, Opus 4.x, Sonnet 5.5 and Sonnet 5; **64K** for Haiku 4.5.
 - **300K output** available on the Message Batches API with beta header `output-300k-2026-03-24`.
 - **`max_tokens` is a hard cap on thinking plus response text.** Thinking is always on for 5.5 and it thinks more per turn at a given effort than Opus 5 — budgets tuned on an Opus 5 thinking-off route will truncate. Anthropic's agentic-coding tests ran well at 128K.
 - Context-aware models: current Claude models track their remaining token budget throughout a conversation.
@@ -489,13 +502,13 @@ The threat that matters for builders is **indirect injection** — a trusted use
 | `best` | Whatever `fable` resolves to; else the same model as `opus` | |
 | `fable` | **Fable 5.1** (from v2.1.257; Fable 5 in Claude-apps-gateway sessions) | For the hardest / longest tasks |
 | `opus` | **Opus 5.5 from v2.1.280**; Opus 5 from v2.1.219; Opus 4.8 from v2.1.154 | "Aliases point to the recommended version for your provider and update over time" |
-| `sonnet` | Latest Sonnet (Sonnet 5, v2.1.197+) | |
+| `sonnet` | **Sonnet 5.5 from v2.1.284** on the Anthropic API; Sonnet 5 from v2.1.197 | Other providers resolve older Sonnets |
 | `haiku` | Latest Haiku | Also background functionality |
 | `opusplan` | `opus` in Plan Mode, `sonnet` otherwise | |
 
-**Opus 5.5 requires Claude Code v2.1.280 or later** (`claude update`). Pin with the full ID (`claude-opus-5-5`) or `ANTHROPIC_DEFAULT_OPUS_MODEL`; the same env family covers `_FABLE_`, `_SONNET_`, `_HAIKU_`, and `CLAUDE_CODE_SUBAGENT_MODEL` sets the default for subagents / teammates / workflow agents. `ANTHROPIC_DEFAULT_MODEL` (v2.1.236+) picks the model new sessions start on when nothing else does. On the Anthropic API, an unrecognised `/model` string is rejected rather than saved; a retiring or auto-remapped model shows a startup warning.
+**Opus 5.5 requires Claude Code v2.1.280 or later, Sonnet 5.5 v2.1.284 or later** (`claude update`). Pin with the full ID (`claude-opus-5-5`) or `ANTHROPIC_DEFAULT_OPUS_MODEL`; the same env family covers `_FABLE_`, `_SONNET_`, `_HAIKU_`, and `CLAUDE_CODE_SUBAGENT_MODEL` sets the default for subagents / teammates / workflow agents. `ANTHROPIC_DEFAULT_MODEL` (v2.1.236+) picks the model new sessions start on when nothing else does. On the Anthropic API, an unrecognised `/model` string is rejected rather than saved; a retiring or auto-remapped model shows a startup warning.
 
-**Effort in Claude Code:** resolution order `CLAUDE_CODE_EFFORT_LEVEL` → `--effort` / `/effort` → saved `modelSettings.<model>.effort` (what `/effort` writes since v2.1.251) or `effortLevel` → model default (`high`; **`medium` on Opus 5.5**; `xhigh` on Opus 4.7). `effortLevel` / `modelSettings` accept `low`–`xhigh` only (no `max`); the env var and `/effort` accept `max` where the model supports it. Levels a model lacks fall back to the highest supported level at or below. **Thinking cannot be turned off on Opus 5.5 or Fable models** — `Alt+T`, `alwaysThinkingEnabled`, `MAX_THINKING_TOKENS=0` are no-ops there. `Ctrl+O` shows the reasoning; `showThinkingSummaries: true` for full summaries.
+**Effort in Claude Code:** resolution order `CLAUDE_CODE_EFFORT_LEVEL` → `--effort` / `/effort` → saved `modelSettings.<model>.effort` (what `/effort` writes since v2.1.251) or `effortLevel` → model default (`high`; **`medium` on Opus 5.5 and Sonnet 5.5**; `xhigh` on Opus 4.7). **Where `effortLevel` counts:** a top-level `effortLevel` in *user* settings does not apply to Opus 5.5 or Sonnet 5.5 (they start at their own default until a per-model `modelSettings` entry or `/effort` sets one); in *project*, *local* or *managed* settings, or via `--settings`, it applies to every model, so a generated project's `effortLevel: xhigh` does take effect. Models missing from Claude Code's effort table, such as Haiku 4.5, don't support effort at all. `effortLevel` / `modelSettings` accept `low`–`xhigh` only (no `max`); the env var and `/effort` accept `max` where the model supports it. Levels a model lacks fall back to the highest supported level at or below. **Thinking cannot be turned off on Opus 5.5, Sonnet 5.5 or Fable models** — `Alt+T`, `alwaysThinkingEnabled`, `MAX_THINKING_TOKENS=0` are no-ops there. `Ctrl+O` shows the reasoning; `showThinkingSummaries: true` for full summaries.
 
 ### Directory Structure
 
@@ -618,6 +631,8 @@ All levels are loaded and merged. Use these for project conventions, tool prefer
 - [Claude's Constitution](https://www.anthropic.com/constitution) · [Usage Policy](https://www.anthropic.com/legal/aup) · [Mitigate jailbreaks & prompt injection](https://platform.claude.com/docs/en/test-and-evaluate/strengthen-guardrails/mitigate-jailbreaks)
 
 ---
+
+*Changelog: 2026-10-01 — **Claude Sonnet 5.5 refresh**, verified against the live platform docs (models overview, sonnet-5-5 overview, pricing, model deprecations) and Claude Code's model-config page. §1 table: Sonnet 5 → Sonnet 5.5 (`claude-sonnet-5-5`, $2 / $10, Jun 2026 cutoff) plus a retirement row; Sonnet 5 moved to the previous generation; a Sonnet 5.5 migration subsection (five breaking changes, the thinking-block response shape, Claude Code v2.1.284 / `medium` default / classifier fallback); Haiku 4.5's retirement floor (not sooner than 2026-10-15, no deprecation announced) flagged; token-budget lists, effort notes and the alias table updated. From the same model-config page: a top-level `effortLevel` in user settings does not reach Opus 5.5 / Sonnet 5.5, while project, local and managed `effortLevel` applies to every model; Haiku 4.5 supports no effort level.*
 
 *Changelog: 2026-09-22 (reconciliation) — folded in the 2026-09-21 refresh items this copy lacked, all verified then against the official sub-agents page and the Claude Code changelog: subagents CAN nest (depth 3 by default since v2.1.219, `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH`), which REPLACES the stale "cannot spawn other subagents" rule; frontmatter gains `initialPrompt`, `background`, `omitClaudeMd` and the `:` naming rule; hooks `PreModelSwitch` / `PostModelSwitch` and `DirectoryAdded`; all-tool `updatedToolOutput`, `duration_ms`, resume staleness on `SessionStart`; the `bashOutputMaxChars` setting (its sibling `taskOutputMaxChars` is inert since the TaskOutput tool's removal). A parallel 09-21 copy had been superseded by the Opus 5.5 rewrite; this entry restores its facts on top of that rewrite.*
 
