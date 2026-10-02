@@ -14,14 +14,14 @@ Every agent maps to one of these archetypes. Each archetype has a canonical tool
 
 ### 1.2 Researcher / Information Gatherer
 
-**What it does:** Searches, retrieves, and synthesizes information. Evaluates libraries, frameworks, competitors. **Tools:** Read, Write, Edit, Grep, WebFetch, WebSearch, Context7
+**What it does:** Searches, retrieves, and synthesizes information. Evaluates libraries, frameworks, competitors. **Tools:** Read, Write, Edit, Grep, WebFetch, WebSearch, `mcp__context7`
 
 ```yaml
 ---
 name: Research
 description: Research domains, libraries, patterns, or competitors and synthesize findings.
 invocation: When investigating unfamiliar problem domains or evaluating technical options.
-tools: [Read, Write, Edit, Grep, WebFetch, WebSearch, Context7]
+tools: [Read, Write, Edit, Grep, WebFetch, WebSearch, mcp__context7]
 ---
 ```
 Key differentiators: WebFetch + WebSearch for external access. Writes to `research/`. Output is comparison matrices with recommendations, not code. Must include honest trade-offs.
@@ -30,7 +30,7 @@ Key differentiators: WebFetch + WebSearch for external access. Writes to `resear
 
 **What it does:** Writes, modifies, and executes code. The workhorse. Implements features, fixes bugs, runs builds.
 
-**Tools:** Read, Write, Edit, Bash, Context7 (+ GitNexus for large codebases)
+**Tools:** Read, Write, Edit, Bash, `mcp__context7` (+ `mcp__gitnexus` for large codebases)
 
 **Full worked example:**
 
@@ -39,7 +39,7 @@ Key differentiators: WebFetch + WebSearch for external access. Writes to `resear
 name: Backend API
 description: Build and modify API endpoints, data models, and server-side business logic.
 invocation: When creating API endpoints, modifying data models, or implementing server-side features.
-tools: [Read, Write, Edit, Bash, Context7]
+tools: [Read, Write, Edit, Bash, mcp__context7]
 ---
 
 # Backend API Builder Agent
@@ -63,7 +63,7 @@ and error handling.
 |------|-------|
 | Read/Write/Edit | Create and modify source files |
 | Bash | Run dev server, execute tests, database migrations, linting |
-| Context7 | Look up framework-specific patterns (Express, Fastify, Django, etc.) |
+| `mcp__context7` | Look up framework-specific patterns (Express, Fastify, Django, etc.) |
 
 ## Key Patterns
 
@@ -106,7 +106,7 @@ and error handling.
 
 **What it does:** Evaluates outputs, catches errors, reviews diffs. **Never modifies files** — reports findings only. This is the critical archetype distinction from builders.
 
-**Tools:** Read, Grep, Glob, Bash, GitNexus — **never Write or Edit**
+**Tools:** Read, Grep, Glob, Bash, `mcp__gitnexus` — **never Write or Edit**
 
 **Full worked example:**
 
@@ -115,7 +115,7 @@ and error handling.
 name: Code Review
 description: Review code changes for quality, correctness, and adherence to project conventions.
 invocation: When reviewing diffs, PRs, or completed features before merging.
-tools: [Read, Grep, Glob, Bash, GitNexus]
+tools: [Read, Grep, Glob, Bash, mcp__gitnexus]
 ---
 
 # Code Review Agent
@@ -138,7 +138,7 @@ adherence, and potential issues. Reports findings — never modifies code direct
 |------|-------|
 | Read/Grep/Glob | Search codebase for patterns, conventions, related code |
 | Bash | Run tests, linter, type checker to verify correctness |
-| GitNexus | Analyze impact of changes across the codebase |
+| `mcp__gitnexus` | Analyze impact of changes across the codebase |
 
 ## Key Patterns
 
@@ -181,28 +181,28 @@ Severity: Critical, High, Medium, Low.
 
 ### 1.5 Planner / Architect
 
-**What it does:** Designs high-level approaches, data models, module boundaries. Structural decisions with lasting consequences. **Tools:** Read, Write, Edit, Bash, GitNexus
+**What it does:** Designs high-level approaches, data models, module boundaries. Structural decisions with lasting consequences. **Tools:** Read, Write, Edit, Bash, `mcp__gitnexus`
 
 ```yaml
 ---
 name: Architecture
 description: Design system architecture, data models, module boundaries, and folder structure.
 invocation: When making structural decisions that affect multiple parts of the codebase.
-tools: [Read, Write, Edit, Bash, GitNexus]
+tools: [Read, Write, Edit, Bash, mcp__gitnexus]
 ---
 ```
 Key differentiators: GitNexus for dependency analysis. Output is ADRs and design docs, not implementation. Must write an ADR before structural changes. Hands off to builders after design is approved.
 
 ### 1.6 Writer / Synthesizer
 
-**What it does:** Produces documents, reports, summaries. Less common in pure dev; essential for content platforms and docs-heavy projects. **Tools:** Read, Write, Edit, Grep, WebFetch, Context7
+**What it does:** Produces documents, reports, summaries. Less common in pure dev; essential for content platforms and docs-heavy projects. **Tools:** Read, Write, Edit, Grep, WebFetch, `mcp__context7`
 
 ```yaml
 ---
 name: Documentation
 description: Write and maintain project documentation, API docs, and user guides.
 invocation: When creating or updating documentation, README files, or API reference docs.
-tools: [Read, Write, Edit, Grep, WebFetch, Context7]
+tools: [Read, Write, Edit, Grep, WebFetch, mcp__context7]
 ---
 ```
 Key differentiators: WebFetch for external library docs. Must read actual source code before documenting. Output is Markdown with code examples. Hands off to builders when docs reveal code bugs.

@@ -87,10 +87,11 @@ You know that simpler agent systems outperform complex ones. You default to fewe
 2. Every CLAUDE.md is adapted from `templates/claude-md-template.md`
 3. Every agent has YAML frontmatter (6 fields): `name`, `description` (soft target ≤120 chars; informativeness wins over compactness), `invocation`, `model`, `effort`, `tools`. Default `model: opus` + `effort: xhigh` for builders / researchers / reviewers / auditors. `opus` is the Claude Code alias, not a pinned ID: it resolves to Anthropic's current recommended Opus (Opus 5.5 on Claude Code ≥ 2.1.280, Opus 5 before that), so a new Opus release reaches every generated project through `claude update` + a restart instead of a repo sweep. Effort stays pinned explicitly because an alias flip can move the model's default (Opus 5.5 defaults to `medium`; `xhigh` is a deliberate choice for long-horizon agentic work, not the neutral setting — see `references/anthropic-guidelines-full.md` § Effort Levels). Pin a full ID (`claude-opus-5-5`) only when a project needs reproducibility over currency. Override per-agent only when the project has a specific reason (e.g. latency-critical hot paths use `model: claude-haiku-4-5-20251001`; Haiku 4.5 doesn't support effort, so the `effort` field has no effect there, and its retirement commitment runs out soonest, not sooner than 2026-10-15).
 4. Tool scoping follows `references/tool-scoping.md`:
-   - **Builders** get: Read, Write, Edit, Bash, Context7 (+ GitNexus/GitHub where appropriate)
+   - **Builders** get: Read, Write, Edit, Bash, `mcp__context7` (+ `mcp__gitnexus` / a GitHub MCP where appropriate)
    - **Auditors** get: Read, Grep, Glob, Bash — **never Write or Edit**
-   - **Researchers** get: Read, Write, Grep, WebFetch, WebSearch, Context7
-   - **Reviewers** get: Read, Grep, Glob, Bash, GitNexus — **never Write or Edit**
+   - **Researchers** get: Read, Write, Grep, WebFetch, WebSearch, `mcp__context7`
+   - **Reviewers** get: Read, Grep, Glob, Bash, `mcp__gitnexus` — **never Write or Edit**
+   - **MCP servers** are always written `mcp__<server>` in `tools:`; a friendly name like `Context7` silently resolves to nothing (G-012)
 5. Flat agent directory — no subdirectories under `.claude/agents/`
 6. A platform-appropriate launcher is included in every output project — `start.bat` (Windows) and `start.command` (macOS/Linux). Default to shipping both unless the target OS is known; each must invoke Claude Code with `-n "<project-name>"` so `/resume` and terminal titles stay readable. The `.command` file needs the executable bit on macOS (`chmod +x start.command`) to be Finder-double-clickable
 7. Verify all output against reference docs before presenting to user

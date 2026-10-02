@@ -18,13 +18,13 @@ The builder's reference for which tools each agent gets. Every tool inclusion or
 | **WebSearch** | Searches the web for information | Research, finding libraries, checking best practices | Agents focused on local code changes |
 | **NotebookEdit** | Edits Jupyter notebook cells | Data science projects with .ipynb files | Non-notebook projects |
 | **Agent** | Spawns sub-agents (can scope to specific agents) | Orchestrators that delegate to specific workers | Most agents — sub-agents can't spawn sub-agents |
-| **Context7** | Queries up-to-date library/framework documentation | Looking up API syntax, config options, migration guides | Agents that don't interact with external libraries |
-| **GitNexus** | Code-graph operations: impact analysis, dependency mapping, route maps | Understanding how changes propagate through codebase | Small projects where grep suffices |
+| **Context7** (`mcp__context7`) | Queries up-to-date library/framework documentation | Looking up API syntax, config options, migration guides | Agents that don't interact with external libraries |
+| **GitNexus** (`mcp__gitnexus`) | Code-graph operations: impact analysis, dependency mapping, route maps | Understanding how changes propagate through codebase | Small projects where grep suffices |
 | **GitHub MCP** | GitHub operations: PRs, issues, file contents, code search | Agents that interact with GitHub repos | Agents that should stay local |
 
 ### MCP Servers (configured per-project in `.mcp.json`)
 
-MCP tools appear as `mcp__<server>__<tool>` and are inherited by agents unless explicitly scoped. The `mcpServers` frontmatter field can scope MCP access per agent.
+MCP tools appear as `mcp__<server>__<tool>`. In a `tools:` list, name an MCP server `mcp__<server>` (every tool on it) or `mcp__<server>__<tool>` (one tool), using the server's key from `.mcp.json` or `~/.claude.json`. A friendly name such as `Context7` resolves to nothing and is dropped without a warning; if nothing in the list resolves, the agent refuses to start. Omitting `tools:` inherits every tool, MCP included. The `mcpServers:` frontmatter field connects servers the main session doesn't have. (G-012, proved 2026-10-02 on Claude Code 2.1.287.)
 
 ---
 
@@ -34,7 +34,7 @@ The canonical mapping. Every tool inclusion has a rationale; every exclusion is 
 
 ### Builder Archetype
 
-**Tools:** `[Read, Write, Edit, Bash, Context7]` + GitNexus for large codebases
+**Tools:** `[Read, Write, Edit, Bash, mcp__context7]` + `mcp__gitnexus` for large codebases
 
 | Tool | Rationale |
 |------|-----------|
@@ -42,14 +42,14 @@ The canonical mapping. Every tool inclusion has a rationale; every exclusion is 
 | Write | Creates new source files, configs, tests |
 | Edit | Modifies existing code with targeted replacements |
 | Bash | Runs dev server, tests, linters, build tools, migrations |
-| Context7 | Looks up framework/library API docs while implementing |
-| GitNexus | (Optional) Impact analysis on large codebases before changes |
+| `mcp__context7` | Looks up framework/library API docs while implementing |
+| `mcp__gitnexus` | (Optional) Impact analysis on large codebases before changes |
 | ~~WebSearch~~ | Excluded — research belongs to the researcher agent |
 | ~~WebFetch~~ | Excluded — external docs lookup during implementation is Context7's job |
 
 ### Auditor Archetype
 
-**Tools:** `[Read, Grep, Glob, Bash]` + Context7 for security library docs
+**Tools:** `[Read, Grep, Glob, Bash]` + `mcp__context7` for security library docs
 
 | Tool | Rationale |
 |------|-----------|
@@ -57,13 +57,13 @@ The canonical mapping. Every tool inclusion has a rationale; every exclusion is 
 | Grep | Searches for anti-patterns, leaked secrets, unsafe functions |
 | Glob | Finds files by pattern (e.g., all config files, all .env files) |
 | Bash | Runs security scanners (`npm audit`, `semgrep`, `trivy`, `pip-audit`) |
-| Context7 | (Optional) Looks up security library docs (helmet, bcrypt, jose) |
+| `mcp__context7` | (Optional) Looks up security library docs (helmet, bcrypt, jose) |
 | ~~Write~~ | **Never.** Auditors report findings — they never modify code |
 | ~~Edit~~ | **Never.** Same reason. The auditor/builder split is the primary safety boundary |
 
 ### Researcher Archetype
 
-**Tools:** `[Read, Write, Edit, Grep, WebFetch, WebSearch, Context7]`
+**Tools:** `[Read, Write, Edit, Grep, WebFetch, WebSearch, mcp__context7]`
 
 | Tool | Rationale |
 |------|-----------|
@@ -71,19 +71,19 @@ The canonical mapping. Every tool inclusion has a rationale; every exclusion is 
 | Write/Edit | Saves research reports to `research/` directory |
 | WebFetch | Reads documentation pages, GitHub READMEs, changelogs |
 | WebSearch | Searches for libraries, benchmarks, comparisons |
-| Context7 | Looks up specific library docs when evaluating candidates |
+| `mcp__context7` | Looks up specific library docs when evaluating candidates |
 | ~~Bash~~ | Excluded — researchers analyze and report, don't execute code |
-| ~~GitNexus~~ | Excluded — code-graph analysis isn't part of research workflow |
+| ~~`mcp__gitnexus`~~ | Excluded — code-graph analysis isn't part of research workflow |
 
 ### Reviewer Archetype
 
-**Tools:** `[Read, Grep, Glob, Bash, GitNexus]`
+**Tools:** `[Read, Grep, Glob, Bash, mcp__gitnexus]`
 
 | Tool | Rationale |
 |------|-----------|
 | Read/Grep/Glob | Searches codebase for patterns, conventions, related code |
 | Bash | Runs tests, linter, type checker to verify correctness |
-| GitNexus | Analyzes impact of changes across the codebase |
+| `mcp__gitnexus` | Analyzes impact of changes across the codebase |
 | ~~Write~~ | **Never.** Reviewers report — they never modify files |
 | ~~Edit~~ | **Never.** Same as Write. This is the critical safety boundary |
 | ~~WebSearch~~ | Excluded — reviewers focus on the code, not external research |
@@ -93,6 +93,8 @@ The canonical mapping. Every tool inclusion has a rationale; every exclusion is 
 ## 3. MCP Server Reference
 
 ### Context7
+
+**In `tools:`:** `mcp__context7`
 
 **What it provides:** Up-to-date documentation for libraries, frameworks, SDKs, APIs, and CLI tools. Queries resolve to specific doc pages with current syntax and config options.
 
@@ -104,6 +106,8 @@ The canonical mapping. Every tool inclusion has a rationale; every exclusion is 
 **Which agents should NOT:** Reviewers (reviewing code, not looking up docs) and pure planners/architects (design-level decisions, not API-level).
 
 ### GitNexus
+
+**In `tools:`:** `mcp__gitnexus`
 
 **What it provides:** Code-graph operations — impact analysis, dependency mapping, route maps, shape checks. Answers "what breaks if I change this?"
 
@@ -134,8 +138,8 @@ These tool groupings work together for specific workflows.
 |---------|-------|----------|
 | **Code search** | Read + Grep + Glob | Auditor scanning for anti-patterns, finding all usages of a function |
 | **Full development** | Read + Write + Edit + Bash | Builder creating and testing code changes |
-| **Research pipeline** | WebFetch + WebSearch + Context7 | Researcher evaluating libraries and documenting findings |
-| **Impact analysis** | Read + Grep + GitNexus | Reviewer assessing how changes propagate through codebase |
+| **Research pipeline** | WebFetch + WebSearch + `mcp__context7` | Researcher evaluating libraries and documenting findings |
+| **Impact analysis** | Read + Grep + `mcp__gitnexus` | Reviewer assessing how changes propagate through codebase |
 | **Security audit** | Read + Grep + Glob + Bash | Auditor scanning for secrets + running `npm audit` / `semgrep` |
 | **Documentation** | Read + Write + Edit + WebFetch | Writer creating docs grounded in actual code + external references |
 
@@ -163,7 +167,7 @@ description: Reviews code quality
 ---
 name: Code Review
 description: Reviews code quality and convention adherence after feature implementation.
-tools: [Read, Grep, Glob, Bash, GitNexus]
+tools: [Read, Grep, Glob, Bash, mcp__gitnexus]
 ---
 ```
 
@@ -185,7 +189,7 @@ tools: [Read, Grep, Glob, Bash, GitNexus]
 tools: [Read, Write, Edit, Grep, Glob, Bash]
 
 # Good — reviewer can only read and report
-tools: [Read, Grep, Glob, Bash, GitNexus]
+tools: [Read, Grep, Glob, Bash, mcp__gitnexus]
 ```
 
 ### 5.4 No Explicit Tools (Inherit All)

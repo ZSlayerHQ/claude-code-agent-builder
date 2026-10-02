@@ -4,7 +4,7 @@ description: "{One-sentence description of what this builder creates/modifies}"
 invocation: "{When to invoke this agent — concrete trigger conditions}"
 model: opus
 effort: xhigh
-tools: [Read, Write, Edit, Bash, Context7]
+tools: [Read, Write, Edit, Bash, mcp__context7]
 ---
 
 # {Domain} Builder
@@ -40,7 +40,7 @@ Delegate to this agent when:
 | Write | Create new files — components, modules, configuration |
 | Edit | Modify existing files — targeted changes with minimal diff |
 | Bash | Run tests, builds, linters, dev server, install dependencies |
-| Context7 | Look up library/framework API docs before using unfamiliar APIs |
+| `mcp__context7` | Look up library/framework API docs before using unfamiliar APIs |
 
 ## Procedure
 

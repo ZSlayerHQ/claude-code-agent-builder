@@ -154,3 +154,24 @@ For per-project gotchas (in generated projects), see that project's own `session
 - Hooks with absolute machine paths are a related portability defect. They belong in the per-machine, gitignored `.claude/settings.local.json`, not the shared `settings.json`.
 
 **Incident:** 2026-09-24. Found during a settings cleanup and fixed with HEAD-based commits in every affected repo.
+
+## G-012 — Friendly MCP names in an agent's `tools:` list resolve to nothing
+
+**Mistake mode:** The agent templates listed MCP servers by friendly name: `tools: [Read, Write, Edit, Bash, Context7]` for builders and `[..., GitNexus]` for reviewers. Claude Code resolves `tools:` entries against real tool names only, and an MCP server needs `mcp__<server>` (or `mcp__<server>__*`). So `Context7` and `GitNexus` were dropped without a warning, and the agent ran with the rest. Only when nothing resolves does the spawn fail. Every generated builder went without Context7, and every generated reviewer without GitNexus.
+
+**Evidence (2026-10-02, Claude Code 2.1.287, headless `--agents` probes):**
+- `tools: ["Context7"]` → "Agent 'probe' would be spawned with zero tools — refusing. Its tools list resolved to nothing: unrecognized [Context7]."
+- `tools: ["Read","Context7","GitNexus"]` → the agent had `Read` only.
+- `tools: ["Read","mcp__context7","mcp__gitnexus"]` → `Read` plus every context7 and gitnexus tool.
+- Official docs (sub-agents, `tools` field): "`mcp__<server>` or `mcp__<server>__*` grants ... every tool from the named server."
+
+**Warning signs:**
+- A capitalised product name in a `tools:` list (`Context7`, `GitNexus`, `GitHub`, `Playwright`).
+- An agent whose brief relies on an MCP server it never seems to call.
+
+**Fix:**
+- Write MCP access as `mcp__<server>`, using the server's key from `.mcp.json` or `~/.claude.json`.
+- Check a new agent's resolved tools with a headless `claude -p --agents` probe, or open `/agents`.
+- Fixed in the templates, the tool-scoping and agent-design references, CLAUDE.md Rule 4 and the output rules. Projects generated earlier keep the old names until their agent files are corrected (one frontmatter line per agent).
+
+**Incident:** 2026-10-02. Found while preparing a roster whose agents depend on an editor MCP server.

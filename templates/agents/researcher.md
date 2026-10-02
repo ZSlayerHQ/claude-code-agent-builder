@@ -4,7 +4,7 @@ description: "{One-sentence description of what this researcher investigates}"
 invocation: "{When to invoke this agent — concrete trigger conditions}"
 model: opus
 effort: xhigh
-tools: [Read, Write, Grep, WebFetch, WebSearch, Context7]
+tools: [Read, Write, Grep, WebFetch, WebSearch, mcp__context7]
 ---
 
 # {Domain} Researcher
@@ -38,7 +38,7 @@ Delegate to this agent when:
 |------|-------|
 | WebSearch | Find libraries, benchmarks, comparisons, community discussions |
 | WebFetch | Read documentation pages, READMEs, blog posts, changelogs |
-| Context7 | Look up specific library API docs for candidates under evaluation |
+| `mcp__context7` | Look up specific library API docs for candidates under evaluation |
 | Read | Review existing codebase to understand current patterns and constraints |
 | Write | Save research reports to `research/YYYY-MM-DD-{topic}.md` |
 | Grep | Search codebase for current usage patterns relevant to the research |
