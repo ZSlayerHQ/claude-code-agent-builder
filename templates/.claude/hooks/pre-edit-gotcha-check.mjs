@@ -89,8 +89,8 @@ function pathSignals(relPath) {
   signals.push({ token: relPath, weight: 10 });
 
   // Each parent-path prefix. Depth scales weight — longer prefixes are more
-  // specific. For "vendor/zslayer/audio/src/lib.rs" emits "vendor" (3),
-  // "vendor/zslayer" (5), "vendor/zslayer/audio" (6), "vendor/zslayer/audio/src" (7).
+  // specific. For "vendor/acme/audio/src/lib.rs" emits "vendor" (3),
+  // "vendor/acme" (5), "vendor/acme/audio" (6), "vendor/acme/audio/src" (7).
   for (let i = 1; i < parts.length; i++) {
     const prefix = parts.slice(0, i).join(posix.sep);
     const weight = Math.min(2 + i, 8);

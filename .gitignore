@@ -52,7 +52,7 @@ $RECYCLE.BIN/
 logs/
 log/
 
-# --- Test artifacts (BAB convention: never commit) ---------------------------
+# --- Test artifacts (convention: never commit) -------------------------------
 playwright-report/
 test-results/
 screenshots/

@@ -7,12 +7,6 @@
       "args": ["-y", "@upstash/context7-mcp@3"],
       "env": {}
     },
-    "gitnexus": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "gitnexus@latest"],
-      "env": {}
-    },
     "playwright": {
       "type": "stdio",
       "command": "npx",

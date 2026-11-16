@@ -96,7 +96,7 @@ Tune the patterns when a project's domain content triggers false positives — e
 
 ## Anti-pattern
 
-**Do NOT** point this hook at `Write` / `Edit` / `Bash` matchers. The hook's job is scanning content the model is ABOUT TO READ, not content the model is WRITING. Confused direction is the most common implementation bug; the agent builder's own `session-docs/GOTCHAS.md` carries the inverse-direction failure mode if you want a worked example.
+**Do NOT** point this hook at `Write` / `Edit` / `Bash` matchers. The hook's job is scanning content the model is ABOUT TO READ, not content the model is WRITING. Confused direction is the most common implementation bug.
 
 ## Attribution + licensing
 

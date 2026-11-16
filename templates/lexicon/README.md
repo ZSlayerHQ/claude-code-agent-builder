@@ -2,6 +2,8 @@
 
 Source-of-truth for every domain term in this project. Code is generated from yml here. The lexicon is not generated from code.
 
+Keep it lean, because agents load it on every task: a `description` is one or two sentences of meaning, with no history. Rationale and evidence go in the Drift Register, the decisions log or the commit. When a term changes, rewrite its entry to the current truth rather than adding an amendment beside it.
+
 This directory contains:
 
 - `_schema.yml` — schema-of-schemas (v2). Defines the 19 layers every resource yml must conform to.

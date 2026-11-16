@@ -19,12 +19,12 @@ This skill re-reads the core documents so the post-compact context reflects what
 - **Long sessions** where the conversation is older than the most recent rule edit
 - **Trust signal:** if you find yourself uncertain whether your understanding of a project's rule reflects the current file, run this skill — it's cheap and catches drift
 
-## Universal files to read (every BAB-generated project has these)
+## Universal files to read (every generated project has these)
 
 Read these in this order. Use the `Read` tool directly (not `Glob` / `Grep` — full content needed):
 
 1. **`CLAUDE.md`** (project root) — project identity, operational principles, agent roster, file locations
-2. **`~/.claude/CLAUDE.md`** (user global) — operator's personal preferences, RTK config if applicable, global rules
+2. **`~/.claude/CLAUDE.md`** (user global, if you have one) — personal preferences and global rules
 3. **`session-docs/STATE.md`** — current invariants, active work, last verified state, open assumptions, active hazards. **READ FIRST after any compact** — anchors the AI to where work left off.
 4. **`session-docs/GOTCHAS.md`** — known failure modes for this project + their fixes
 5. **`PROJECT-DETAILS.md`** — tech stack, conventions, commands, locations
@@ -43,7 +43,7 @@ If this project has any of the following, re-read them too:
 - `lexicon/DRIFT-REGISTER.md` (if applicable) — any locked-decision overrides
 - `docs/VISION.md` (if scope-wide vision document exists) — mission + non-goals
 - `session-docs/DECISIONS.md` — past architectural choices + reasoning
-- `bugfixing/GOTCHAS.md` or domain-specific gotcha files — re-read the relevant sections
+- Any domain-specific gotcha files — re-read the relevant sections
 
 ## Optional second pass
 

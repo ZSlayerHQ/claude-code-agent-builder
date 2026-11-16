@@ -55,7 +55,7 @@ Every recommendation depends on **who is asking** (or **what context applies**).
 
 - {Context dimension 1, e.g. "Cash on hand by source"}
 - {Context dimension 2, e.g. "Risk appetite"}
-- {Context dimension 3, e.g. "Goal — primary residence vs develop-and-sell"}
+- {Context dimension 3, e.g. "Goal — personal use vs resale"}
 - {Context dimension 4, e.g. "Time horizon"}
 - _(extend per project)_
 

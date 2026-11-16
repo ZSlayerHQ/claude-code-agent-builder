@@ -354,7 +354,7 @@ app.on('before-quit', async () => {
 
 ### 7.3 Sub-package with own `package.json`
 
-Put the MCP server in its own folder with `"type": "module"`. This is the pattern used in the launcher mcp-briefing spec. Keeps the SDK's dep tree isolated from the host.
+Put the MCP server in its own folder with `"type": "module"`. Keeps the SDK's dep tree isolated from the host.
 
 ```
 launcher/

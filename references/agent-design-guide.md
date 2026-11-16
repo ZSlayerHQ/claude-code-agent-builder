@@ -30,7 +30,7 @@ Key differentiators: WebFetch + WebSearch for external access. Writes to `resear
 
 **What it does:** Writes, modifies, and executes code. The workhorse. Implements features, fixes bugs, runs builds.
 
-**Tools:** Read, Write, Edit, Bash, `mcp__context7` (+ `mcp__gitnexus` for large codebases)
+**Tools:** Read, Write, Edit, Bash, `mcp__context7`
 
 **Full worked example:**
 
@@ -106,7 +106,7 @@ and error handling.
 
 **What it does:** Evaluates outputs, catches errors, reviews diffs. **Never modifies files** — reports findings only. This is the critical archetype distinction from builders.
 
-**Tools:** Read, Grep, Glob, Bash, `mcp__gitnexus` — **never Write or Edit**
+**Tools:** Read, Grep, Glob, Bash — **never Write or Edit**
 
 **Full worked example:**
 
@@ -115,7 +115,7 @@ and error handling.
 name: Code Review
 description: Review code changes for quality, correctness, and adherence to project conventions.
 invocation: When reviewing diffs, PRs, or completed features before merging.
-tools: [Read, Grep, Glob, Bash, mcp__gitnexus]
+tools: [Read, Grep, Glob, Bash]
 ---
 
 # Code Review Agent
@@ -138,7 +138,6 @@ adherence, and potential issues. Reports findings — never modifies code direct
 |------|-------|
 | Read/Grep/Glob | Search codebase for patterns, conventions, related code |
 | Bash | Run tests, linter, type checker to verify correctness |
-| `mcp__gitnexus` | Analyze impact of changes across the codebase |
 
 ## Key Patterns
 
@@ -181,17 +180,17 @@ Severity: Critical, High, Medium, Low.
 
 ### 1.5 Planner / Architect
 
-**What it does:** Designs high-level approaches, data models, module boundaries. Structural decisions with lasting consequences. **Tools:** Read, Write, Edit, Bash, `mcp__gitnexus`
+**What it does:** Designs high-level approaches, data models, module boundaries. Structural decisions with lasting consequences. **Tools:** Read, Write, Edit, Bash, Grep, Glob
 
 ```yaml
 ---
 name: Architecture
 description: Design system architecture, data models, module boundaries, and folder structure.
 invocation: When making structural decisions that affect multiple parts of the codebase.
-tools: [Read, Write, Edit, Bash, mcp__gitnexus]
+tools: [Read, Write, Edit, Bash, Grep, Glob]
 ---
 ```
-Key differentiators: GitNexus for dependency analysis. Output is ADRs and design docs, not implementation. Must write an ADR before structural changes. Hands off to builders after design is approved.
+Key differentiators: reads widely (Grep, Glob) to map dependencies before deciding. Output is ADRs and design docs, not implementation. Must write an ADR before structural changes. Hands off to builders after design is approved.
 
 ### 1.6 Writer / Synthesizer
 

@@ -152,7 +152,7 @@ From watching this category mature:
 |---|---|---|
 | **App builders** (Lovable, v0, Replit) | ❌ | Hosted UI; users want browser flow, not agent flow |
 | **AI coding assistants** (Cursor, CC, Windsurf, Copilot, Gemini CLI, Codex) | ✅ All of them speak MCP now | Direct fit |
-| **Service launchers / process managers** | ✅ Underserved | The launcher MCP pattern fits here |
+| **Service launchers / process managers** | ✅ Underserved | A local service-launcher MCP fits here |
 | **Doc maintainers** | ✅ Strong fit | Reactive (post-commit, session-start) keeps docs honest without API cost |
 | **Notifiers** | ⚠ Often better as standalone | Notifications need OS-level integration, not MCP tool calls |
 | **Worktree orchestration** | ⚠ Often better as CLI | Tight coupling to git plumbing; MCP layer adds latency |

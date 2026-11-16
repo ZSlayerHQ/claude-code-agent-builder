@@ -4,7 +4,7 @@ description: "{One-sentence description of what this reviewer evaluates}"
 invocation: "{When to invoke this agent — concrete trigger conditions}"
 model: opus
 effort: xhigh
-tools: [Read, Grep, Glob, Bash, mcp__gitnexus]
+tools: [Read, Grep, Glob, Bash]
 ---
 
 # {Domain} Reviewer
@@ -41,7 +41,6 @@ Delegate to this agent when:
 | Grep | Search for anti-patterns, inconsistencies, convention violations |
 | Glob | Locate all files affected by the change, find related test files |
 | Bash | Run tests, linters, type checkers to verify code quality programmatically |
-| `mcp__gitnexus` | Assess change impact — find dependents, detect breaking changes, trace call chains |
 
 ## Procedure
 

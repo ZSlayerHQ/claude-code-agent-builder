@@ -212,7 +212,7 @@ const server = new McpServer({
   version: '1.0.0',
   instructions: `
 This is the launcher MCP server. It exposes the local service stack and
-project docs to morning-briefing and ad-hoc developer agent sessions.
+project docs to scheduled briefing and ad-hoc developer agent sessions.
 
 Use it to:
 - Inspect current state of services (service_list, service_status, service_logs)
@@ -224,7 +224,7 @@ Use it to:
 Conventions:
 - Always call service_list first to learn what services exist by id.
 - For doc_write, present a unified diff and ask the user before calling.
-- Project ids: cortana, liftai, launcher, serenity-launcher.
+- Project ids: billing, search, launcher, docs-site.
 - Never assume a service is running — confirm via service_status.
 `.trim(),
 });
@@ -293,14 +293,14 @@ MCP servers run with the privileges of whoever launched them. Defence in depth i
 
 ```js
 const ALLOWED_WRITE_PATTERNS = [
-  /^D:\\Games\\SPT 2026\\Development\\Projects\\docs\\recent-project\.md$/i,
-  /^D:\\Games\\SPT 2026\\Development\\Projects\\Build\\[^\\]+\\CLAUDE\.md$/i,
+  /^C:\\work\\projects\\docs\\recent-project\.md$/i,
+  /^C:\\work\\projects\\[^\\]+\\CLAUDE\.md$/i,
   // ...
 ];
 
 const DENY_LIST = [
   /\.env$/i, /\.env\./i, /\.pem$/i, /\.key$/i,
-  /personality\.js$/i, /agents\.json$/i, /config\.js$/i,
+  /credentials\.json$/i, /secrets\.json$/i, /config\.js$/i,
   /node_modules[\\/]/i, /\.git[\\/]/i, /secrets[\\/]/i,
 ];
 
@@ -332,9 +332,8 @@ Per AWS guidelines: **comment every allowlist entry with the reason and date add
 
 ```js
 const ALLOWED_WRITE_PATTERNS = [
-  // Project-level state-of-the-world doc, refreshed by morning-briefing agent.
-  // Added 2026-05-10 (mcp-briefing spec).
-  /^D:\\Games\\SPT 2026\\Development\\Projects\\docs\\recent-project\.md$/i,
+  // Project-level state-of-the-world doc, refreshed by a scheduled briefing agent.
+  /^C:\\work\\projects\\docs\\recent-project\.md$/i,
   // ...
 ];
 ```
@@ -384,7 +383,7 @@ Every error response should:
 return {
   content: [{
     type: 'text',
-    text: 'Unknown service id "cortana-bott". Did you mean "cortana"?\n' +
+    text: 'Unknown service id "billling". Did you mean "billing"?\n' +
           'Hint: call service_list to see all valid ids.',
   }],
   isError: true,

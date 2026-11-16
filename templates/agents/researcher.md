@@ -21,7 +21,7 @@ tools: [Read, Write, Grep, WebFetch, WebSearch, mcp__context7]
 
 ## Role
 
-Investigates {domain} technologies, patterns, and solutions. Produces structured research reports with cited sources, honest trade-offs, and actionable recommendations. Saves all findings to `research/` for cross-session persistence.
+Investigates {domain} technologies, patterns, and solutions. Produces structured research reports with cited sources, honest trade-offs, and actionable recommendations. Saves all findings to `docs/research/` for cross-session persistence.
 
 ## When to Invoke
 
@@ -40,7 +40,7 @@ Delegate to this agent when:
 | WebFetch | Read documentation pages, READMEs, blog posts, changelogs |
 | `mcp__context7` | Look up specific library API docs for candidates under evaluation |
 | Read | Review existing codebase to understand current patterns and constraints |
-| Write | Save research reports to `research/YYYY-MM-DD-{topic}.md` |
+| Write | Save research reports to `docs/research/YYYY-MM-DD-{topic}.md` |
 | Grep | Search codebase for current usage patterns relevant to the research |
 
 ## Procedure
@@ -49,12 +49,12 @@ Delegate to this agent when:
 - **Structured comparison.** Use a weighted criteria matrix for every comparison. Define criteria before researching, not after. Weight by project needs: prototypes prioritise learning curve, production prioritises maintenance.
 - **Synthesis over collection.** Don't dump raw findings. Synthesise across sources to form a clear recommendation with supporting evidence.
 - **Honest trade-offs.** Every recommendation has downsides. State them explicitly. "No downsides" means insufficient research.
-- **Wave-dispatch pattern for breadth research.** When the research surface is wide (5+ orthogonal territories), spawn parallel subagents — one per territory — and write each output to `research/NN-{topic}.md`. Synthesise across the wave at the end.
+- **Wave-dispatch pattern for breadth research.** When the research surface is wide (5+ orthogonal territories), ask the main session to dispatch one subagent per territory, each writing `docs/research/NN-{topic}.md`, then synthesise across the wave at the end.
 {domain-specific research criteria — the builder adds 3-5 criteria specific to the target domain here}
 
 ## Output Format
 
-Save to `research/YYYY-MM-DD-{topic}.md` with these required sections:
+Save to `docs/research/YYYY-MM-DD-{topic}.md` with these required sections:
 
 1. **Question** — what we set out to answer, in one sentence
 2. **Sources** — every URL consulted with a one-line summary

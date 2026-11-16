@@ -17,9 +17,8 @@ The builder's reference for which tools each agent gets. Every tool inclusion or
 | **WebFetch** | Fetches content from a URL | Reading documentation pages, API specs, blog posts | Agents that should work only with local code |
 | **WebSearch** | Searches the web for information | Research, finding libraries, checking best practices | Agents focused on local code changes |
 | **NotebookEdit** | Edits Jupyter notebook cells | Data science projects with .ipynb files | Non-notebook projects |
-| **Agent** | Spawns sub-agents (can scope to specific agents) | Orchestrators that delegate to specific workers | Most agents — sub-agents can't spawn sub-agents |
+| **Agent** | Spawns sub-agents (can scope to specific agents) | Orchestrators that delegate to specific workers | Most agents — nested spawning works (up to three layers below the main conversation) but rarely earns its cost |
 | **Context7** (`mcp__context7`) | Queries up-to-date library/framework documentation | Looking up API syntax, config options, migration guides | Agents that don't interact with external libraries |
-| **GitNexus** (`mcp__gitnexus`) | Code-graph operations: impact analysis, dependency mapping, route maps | Understanding how changes propagate through codebase | Small projects where grep suffices |
 | **GitHub MCP** | GitHub operations: PRs, issues, file contents, code search | Agents that interact with GitHub repos | Agents that should stay local |
 
 ### MCP Servers (configured per-project in `.mcp.json`)
@@ -34,7 +33,7 @@ The canonical mapping. Every tool inclusion has a rationale; every exclusion is 
 
 ### Builder Archetype
 
-**Tools:** `[Read, Write, Edit, Bash, mcp__context7]` + `mcp__gitnexus` for large codebases
+**Tools:** `[Read, Write, Edit, Bash, mcp__context7]`
 
 | Tool | Rationale |
 |------|-----------|
@@ -43,7 +42,6 @@ The canonical mapping. Every tool inclusion has a rationale; every exclusion is 
 | Edit | Modifies existing code with targeted replacements |
 | Bash | Runs dev server, tests, linters, build tools, migrations |
 | `mcp__context7` | Looks up framework/library API docs while implementing |
-| `mcp__gitnexus` | (Optional) Impact analysis on large codebases before changes |
 | ~~WebSearch~~ | Excluded — research belongs to the researcher agent |
 | ~~WebFetch~~ | Excluded — external docs lookup during implementation is Context7's job |
 
@@ -73,17 +71,15 @@ The canonical mapping. Every tool inclusion has a rationale; every exclusion is 
 | WebSearch | Searches for libraries, benchmarks, comparisons |
 | `mcp__context7` | Looks up specific library docs when evaluating candidates |
 | ~~Bash~~ | Excluded — researchers analyze and report, don't execute code |
-| ~~`mcp__gitnexus`~~ | Excluded — code-graph analysis isn't part of research workflow |
 
 ### Reviewer Archetype
 
-**Tools:** `[Read, Grep, Glob, Bash, mcp__gitnexus]`
+**Tools:** `[Read, Grep, Glob, Bash]`
 
 | Tool | Rationale |
 |------|-----------|
 | Read/Grep/Glob | Searches codebase for patterns, conventions, related code |
 | Bash | Runs tests, linter, type checker to verify correctness |
-| `mcp__gitnexus` | Analyzes impact of changes across the codebase |
 | ~~Write~~ | **Never.** Reviewers report — they never modify files |
 | ~~Edit~~ | **Never.** Same as Write. This is the critical safety boundary |
 | ~~WebSearch~~ | Excluded — reviewers focus on the code, not external research |
@@ -104,19 +100,6 @@ The canonical mapping. Every tool inclusion has a rationale; every exclusion is 
 - **Auditors** — (optional) look up security library patterns
 
 **Which agents should NOT:** Reviewers (reviewing code, not looking up docs) and pure planners/architects (design-level decisions, not API-level).
-
-### GitNexus
-
-**In `tools:`:** `mcp__gitnexus`
-
-**What it provides:** Code-graph operations — impact analysis, dependency mapping, route maps, shape checks. Answers "what breaks if I change this?"
-
-**Which agents should have it:**
-- **Reviewers** — analyze impact of changes across the codebase
-- **Builders** — (optional, large codebases) check impact before modifying shared code
-- **Architects** — analyze module dependencies for structural decisions
-
-**Which agents should NOT:** Researchers (not analyzing code structure) and writers (documenting, not analyzing dependencies).
 
 ### GitHub MCP
 
@@ -139,7 +122,7 @@ These tool groupings work together for specific workflows.
 | **Code search** | Read + Grep + Glob | Auditor scanning for anti-patterns, finding all usages of a function |
 | **Full development** | Read + Write + Edit + Bash | Builder creating and testing code changes |
 | **Research pipeline** | WebFetch + WebSearch + `mcp__context7` | Researcher evaluating libraries and documenting findings |
-| **Impact analysis** | Read + Grep + `mcp__gitnexus` | Reviewer assessing how changes propagate through codebase |
+| **Impact analysis** | Read + Grep + Glob | Reviewer assessing how changes propagate through codebase |
 | **Security audit** | Read + Grep + Glob + Bash | Auditor scanning for secrets + running `npm audit` / `semgrep` |
 | **Documentation** | Read + Write + Edit + WebFetch | Writer creating docs grounded in actual code + external references |
 
@@ -167,7 +150,7 @@ description: Reviews code quality
 ---
 name: Code Review
 description: Reviews code quality and convention adherence after feature implementation.
-tools: [Read, Grep, Glob, Bash, mcp__gitnexus]
+tools: [Read, Grep, Glob, Bash]
 ---
 ```
 
@@ -189,7 +172,7 @@ tools: [Read, Grep, Glob, Bash, mcp__gitnexus]
 tools: [Read, Write, Edit, Grep, Glob, Bash]
 
 # Good — reviewer can only read and report
-tools: [Read, Grep, Glob, Bash, mcp__gitnexus]
+tools: [Read, Grep, Glob, Bash]
 ```
 
 ### 5.4 No Explicit Tools (Inherit All)

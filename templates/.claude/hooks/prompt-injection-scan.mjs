@@ -7,7 +7,7 @@
 //
 // CRITICAL: this hook scans MODEL INPUTS (tool_response content the
 // model is about to read), NOT model outputs. Confused direction is
-// the most common implementation bug — see session-docs/GOTCHAS.md.
+// the most common implementation bug.
 //
 // Behaviour:
 //   - On clean scan: silent exit (no output, no context injection)
@@ -31,7 +31,7 @@
 //     }]
 //   }
 //
-// Matcher scope (tune per project — see CLAUDE.md Rule 13):
+// Matcher scope (tune per project):
 //   The default matcher covers web-fetch-shaped tools (WebFetch/WebSearch and
 //   MCP tools whose name STARTS with fetch/get/crawl/search/stealthy_fetch/…).
 //   It does NOT cover untrusted external content that arrives under other

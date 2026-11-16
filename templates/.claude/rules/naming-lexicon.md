@@ -56,7 +56,7 @@ If you would write any of the following without first checking `lexicon/`, stop:
 2. Edit the relevant `lexicon/resources/<resource>.yml` — add the field / enum value / tool / event.
 3. If introducing a new verb, edit `docs/agents/00-NAMING-CONVENTIONS.md` (verb whitelist) and add a Drift Register entry citing the owner sign-off.
 4. Run the lexicon-check CI command (must pass).
-5. Run lexicon codegen (regenerates the TS + ORM artifacts).
+5. Run lexicon codegen (regenerates the TS + ORM artifacts). The check and the codegen are written in the project's first session, for its own stack; until they exist, review the change by hand.
 6. Now you can use the term in code.
 
 ## How to override a locked decision
@@ -76,7 +76,7 @@ If you would write any of the following without first checking `lexicon/`, stop:
 
 ## Anti-patterns this rule prevents
 
-- "I'll just add `cornerPlot` here and `corner_plot` there and align them later" — no, align them in `lexicon/` first.
+- "I'll just add `orderItem` here and `order_item` there and align them later" — no, align them in `lexicon/` first.
 - "I'll alias `score_total` to `totalScore` in the API layer" — no, the casing rule (D3 in README) fixes the case mapping.
 - "I'll let the LLM emit free-form severity strings and normalise them" — no, AI outputs Zod-validated against lexicon enums.
 - "This is a one-off internal field, no need to lexicon-ise" — every field becomes a UI label, an API key, or an LLM token eventually. Lexicon-ise it now.

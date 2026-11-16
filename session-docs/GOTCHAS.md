@@ -175,3 +175,91 @@ For per-project gotchas (in generated projects), see that project's own `session
 - Fixed in the templates, the tool-scoping and agent-design references, CLAUDE.md Rule 4 and the output rules. Projects generated earlier keep the old names until their agent files are corrected (one frontmatter line per agent).
 
 **Incident:** 2026-10-02. Found while preparing a roster whose agents depend on an editor MCP server.
+
+## G-013 — A branch with no upstream is not an unpushed branch
+
+**Mistake mode:** Before a repository was retired, a count of local branches with no upstream (89 of 90) went to the operator as "89 branches that exist only on this machine". Most were already merged on the remote. The check answered "which branches track a remote branch", not "which commits are not on the remote".
+
+**Fix:** Per branch, `git rev-list --count <branch> --not --remotes`; per detached worktree, `--not --branches --remotes`; then stashes and `git status` in every worktree. Report commits and uncommitted files, not branch counts.
+
+**Incident:** 2026-10. The real exposure was 72 commits on 14 branches. Corrected before the decision was taken.
+
+## G-014 — The gotcha hook knows the heading scheme in two places
+
+**Mistake mode:** A project whose gotchas are not numbered `G-NNN` gets `pre-edit-gotcha-check.mjs` with `HEADING_REGEX` changed to its own scheme. The hook then finds entries, but `formatOutput` strips each heading with a second, hard-coded `G-\d+` pattern that no longer matches, so every injected entry prints its title twice.
+
+**Fix:** Change both patterns together, then dry-run the hook against the project's real `GOTCHAS.md` and count each ID once in the parsed output.
+
+**Incident:** 2026-10, generating a project with its own numbering. Caught in the dry run.
+
+## G-015 — A headless check from a subfolder can pass on the wrong model
+
+**Mistake mode:** A project routed its model through `.claude/settings.json`, and those settings load only for sessions opened in that folder. A `claude -p` smoke test run from a subfolder passed, and was reported as proof of the routing. It had run on the default model through the normal login.
+
+**Fix:** Run the check from the project root, and assert the model from the run's `init` record. A pass only counts if the output shows it went the intended way.
+
+**Incident:** 2026-11. Found when the same test failed from the subfolder with an invalid-model error.
+
+## G-016 — Deny rules match how a command is spelled
+
+**Mistake mode:** A `Bash(git push ...)` deny rule matches the command as typed. A wrapper word in front (`rtk git push`), `git -C`, an extra flag or a different refspec all walked past `Bash(git push origin v*)`: 5 of 9 spellings in one test.
+
+**Fix:** Where a deny guards something irreversible, also check the thing itself. A `pre-push` git hook that refuses the protected refs works however the push is spelled.
+
+**Incident:** 2026-11, auditing a generated project against a throwaway local remote.
+
+## G-017 — A generated doc can narrow what its own research found
+
+**Mistake mode:** A project's research listed every marker of a restricted API, yet its agents, skills and `CLAUDE.md` reduced them to one name: 19 functions out of at least 459. The research was right and each working doc read well, so only the upstream source showed the gap.
+
+**Fix:** When a rule is distilled from research, count what it catches against the primary source before shipping it.
+
+**Incident:** 2026-11.
+
+## G-018 — A grep check that bans plain words bends the agent's vocabulary
+
+**Mistake mode:** An agent file forbade self-rating with a Verification grep for `rating|score|rank`. On a problem about ranking search results the agent avoided "score" and "rank" altogether so the check would pass.
+
+**Fix:** Anchor a check for opinions to labels and opinion phrases (`^(Rating|Score|Rank|Verdict):`, "best candidate"), and say in the line that ordinary uses of the words are fine. Smoke-test the agent on a request where the banned words are normal.
+
+**Incident:** 2026-11, found by the smoke test.
+
+## G-019 — A headless smoke test without the launcher's permission flag refuses writes
+
+**Mistake mode:** A `claude -p --agent <name>` smoke run started in `default` permission mode, because a project's `defaultMode: bypassPermissions` does not apply to an untrusted copy in headless mode. The agent's one Write was refused, so its output format went untested.
+
+**Fix:** Pass the same permission flag the launcher uses, and read `permissionMode` in the stream's `init` event before trusting the result. The same event lists the model, agents, skills and plugins.
+
+**Incident:** 2026-11.
+
+## G-020 — An `mcp__<server>` entry grants every tool on the server, including ones that write
+
+**Mistake mode:** A "read-only" reviewer template listed an MCP server for impact analysis. One of that server's tools renamed symbols across files, so the reviewer held a write tool.
+
+**Fix:** Before giving a server to a reviewer or auditor, list its tools and add `disallowedTools` for any that write, or name the read-only tools one by one as `mcp__<server>__<tool>`.
+
+**Incident:** 2026-11, a smoke test in which a reviewer listed its own tools. The server was dropped from the default set.
+
+## G-021 — A headless run's first event can list an agent's tools before its MCP servers connect
+
+**Mistake mode:** Reading the `init` event of `claude -p --agent <name>` to prove an MCP server resolved. The server was still `pending` three seconds in, so the event listed none of its tools and looked like a naming fault.
+
+**Fix:** Check `mcp_servers[].status` in the same event. If a server is `pending`, read the tool list of a run long enough to have used it.
+
+**Incident:** 2026-11.
+
+## G-022 — A smoke test in a temp folder loads any `CLAUDE.md` above it
+
+**Mistake mode:** Reading a headless smoke test's complaints as faults in the project under test. Claude Code loads `CLAUDE.md` from every parent folder, so a stray one above the throwaway copy joins the run.
+
+**Fix:** Before a smoke test in a scratch folder, look for a `CLAUDE.md` in each parent folder up to the drive root. Treat "two `CLAUDE.md` files disagree" in a result as this artefact first.
+
+**Incident:** 2026-11. A months-old copy of another project's `CLAUDE.md` in the system temp folder had been loading into every scratch run.
+
+## G-023 — Committing on a live project's own checkout
+
+**Mistake mode:** Delivering a change to a project that already runs its own sessions by committing in its working folder, as you would in a project just generated. A live project has its own merge flow: the foreign commit leaves its checkout apart from its remote, and its sessions cannot tell where the change came from.
+
+**Fix:** Before writing in a live project, find how it takes changes (usually a pushed branch that its own session merges). Where no route is recorded, stage the file under `output/` and hand over its path.
+
+**Incident:** 2026-11. The checkout was one commit ahead of and two behind its remote within minutes.

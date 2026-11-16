@@ -51,7 +51,7 @@ If the operator says they're a beginner, generate beginner-tuned. They can ask t
 - Test runs include "what passing means" + "what failing means" context
 
 **What NOT to do:**
-- Don't bury the operator in 12 plugins and 4 MCPs on day 1. Let the defaults stand but call out only the 2-3 most important in the operational principles.
+- Don't bury the operator in 6 plugins and 3 MCPs on day 1. Let the defaults stand but call out only the 2-3 most important in the operational principles.
 - Don't include `references/anthropic-guidelines-full.md` in the always-available list with no commentary — the operator will read it and get overwhelmed. Either skip the citation or label it as "advanced reading."
 
 ---
@@ -181,7 +181,7 @@ Before generating, sanity-check the profile against the project brief:
 
 - Beginner-profile operator asking for a **payment processing app**? Surface the regulatory complexity at intake; ask if they want to proceed solo or escalate to a developer. (Don't refuse — but don't pretend the complexity is invisible.)
 - Advanced-profile operator asking for a **personal blog**? Honour the profile; they're choosing density for speed-of-iteration, not because they can't handle help.
-- Beginner-profile operator asking for a **research wave on UK property law**? Honour the profile but in the wave subagents' research files, lean toward executive-summary phrasing — full territorial depth is preserved, the synthesis layer becomes more accessible.
+- Beginner-profile operator asking for a **research wave on a regulated domain**? Honour the profile but in the wave subagents' research files, lean toward executive-summary phrasing — full territorial depth is preserved, the synthesis layer becomes more accessible.
 
 The profile is a *tone* signal, not a *competency restriction*. Operator competency is what they say it is plus what their requests demonstrate.
 

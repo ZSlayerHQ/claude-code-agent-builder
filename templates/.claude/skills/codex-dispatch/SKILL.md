@@ -33,14 +33,14 @@ deployed bundle) first. A review validates a design against its premise; it stru
 catch a false premise — every reviewer is downstream of the same secondhand report. A well-designed
 fix for a bug that does not exist still passes review.
 
-## Model + effort selection (GPT-6 generation, September 2026)
+## Model + effort selection (GPT-6 generation)
 
 | Model | Use for | USD per M in / out |
 |---|---|---|
 | `gpt-6.1-sol` | DEFAULT for verification / review / audit (since 2026-09-29). OpenAI positions it as near-Astra on complex work at Sol's price. Its lowest effort is `low`: it rejects `none` and `minimal`. Cached input 0.10. Needs Codex CLI 0.159 or later on ChatGPT-account sign-in (0.156 returns HTTP 400 "not supported"); update the CLI before concluding your plan lacks it. | 2 / 10 |
 | `gpt-6-sol` | Fallback for the Sol lane. In one measured head-to-head (2026-09-23, same prompt, both at `medium`) it found every core issue, one partially, with zero false positives. | 2 / 10 |
 | `gpt-6-astra` | The hardest judgment-heavy reviews and sign-off audits. It found the most real issues in that head-to-head, but ranked a false positive first — verify any "this breaks the build" claim from a read-only run before acting on it. Rejects effort `none`, `temperature` and `top_p`. | 10 / 50 |
-| `gpt-6.1-sol` at `low` | Fast mechanical scans, lighter sweeps, subagent legs (`gpt-6-sol` at `low` as fallback). There is no GPT-6 Terra. | 2 / 10 |
+| `gpt-6.1-sol` at `low` | Fast mechanical scans, lighter sweeps, subagent legs (`gpt-6-sol` at `low` as fallback). GPT-6.1 Terra (`gpt-6.1-terra`, Codex CLI 0.159.0 or later) is the cheaper, faster tier when Sol is more than a sweep needs. | 2 / 10 |
 | `gpt-6-luna` | Extraction / classification / transform with a well-defined "good result", and web research (the measured research default since 2026-09-24 — see the recipe below). Effort up to `max`, no Ultra mode. WEAK long-context — never for big-repo audits. | 0.10 / 0.50 |
 | `gpt-5.6-luna` | Rollout fallback for the Luna lane; gave more copy-ready depth but slightly lower accuracy in the 2026-09-24 research head-to-head. | 0.20 / 1.20 |
 | `gpt-5.6-sol` / `gpt-5.6-terra` | Last-resort fallbacks when the account or client sees neither GPT-6.1 Sol nor GPT-6 Sol. | 4 / 20; 2 / 12 |
@@ -90,8 +90,8 @@ Official guidance:
 4. **Sandbox (`-s`)**: `read-only` (the default) for pure verification — on Windows this also
    avoids the broken write-sandbox machinery. `workspace-write` only when the run must write the
    report itself. `danger-full-access` only in isolated or containerised contexts — never as a
-   standing default. **Approval** is an independent axis (`untrusted` / `on-request` / `never` /
-   `granular`), but `exec` is already non-interactive, so an approval flag is usually redundant.
+   standing default. **Approval** is an independent axis (`on-request` / `never` /
+   `granular`; `untrusted` is retired and can stop the client from starting), but `exec` is already non-interactive, so an approval flag is usually redundant.
    When you do need one, use global position (`codex -a never exec …`) or config
    (`-c approval_policy=never`, which `exec` does accept). Canonical safe review combo:
    ```bash
@@ -159,7 +159,7 @@ describes the pattern rather than shipping scripts that would silently mismatch 
 runs that reliably finish under ~8 minutes need none of this — a plain backgrounded `codex exec` is
 fine.
 
-## Prompt structure (official GPT-5.6 guidance — the canon)
+## Prompt structure
 
 **GPT-6 guidance supersedes the 5.6 wording** (OpenAI, "Rethinking skills and prompts for GPT-6 Astra", September
 2026): soften boundary wording, say what "done" means, and on the API prefer `text.verbosity` over asking for brevity.
@@ -172,8 +172,9 @@ accordingly:
 - **Describe the destination, not the route**: goal + hard constraints + success criteria. Drop
   step-by-step prescriptions — the model plans better than 5.5 did.
 - **Name file paths explicitly** — the CLI cannot see your open files or your conversation.
-- **Do not say "be concise"** (5.6 is already concise; it over-truncates). Instead state
-  preserve-vs-omit priority: "Lead with the verdict. Include evidence per finding and any material
+- **Say what output style you need.** GPT-6 models write long, formatted answers by default, the
+  reverse of GPT-5.6: ask for clear paragraphs, lists only for parallel items, the main point first.
+  State the preserve-vs-omit priority: "Lead with the verdict. Include evidence per finding and any material
   caveat. Omit narrative."
 - **Review-task shape** (official exemplar pattern): artifact + failure-mode focus + per-finding
   evidence requirements (cite file:line, impact, likelihood, mitigation) + ranked, bounded output
@@ -274,7 +275,7 @@ codex --search exec -m gpt-6-luna -c model_reasoning_effort=xhigh \
   the deliverable harness-side; `--ephemeral --skip-git-repo-check` suit non-repo scratchpad runs.
 - Prompt shape: state the research question, the audience and use, a numbered coverage list, "lead
   with a prioritized concrete guideline list", and "every non-obvious claim cites its source URL".
-  Do NOT say "be concise".
+  Say how long and how formatted the report should be.
 - These runs typically finish in 4-8 minutes, under the 10-minute Bash cap — plain backgrounded
   exec is fine, no out-of-harness spawn needed.
 - Luna's long-context weakness does not bite here (fresh context, web-fed); it remains the wrong

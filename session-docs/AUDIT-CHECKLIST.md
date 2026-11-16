@@ -1,5 +1,9 @@
 # Agent Builder Audit Checklist
 
+> **Terms.** A *kit* is any set of files staged under `output/` for review before it is promoted: a generated
+> project, or a change to this builder's own templates. `INTEGRATION-NOTES.md` is the optional note a kit carries
+> listing the manual steps to install it; skip the steps that mention it when a kit has none.
+
 When the operator asks "is it ready?" / "do a full audit" / "do these docs make sense?" / "does X look solid?", run this checklist end-to-end against the artifact under review. Don't reason from memory or vibes — open the files.
 
 Companion docs:

@@ -139,7 +139,7 @@ Used by: undeadlist/claude-code-agents. These are NOT auto-discovered — they m
 └── qa/
     └── test-runner.md
 ```
-Used by: Our RED NUCLEUS project. Not widely seen in the community.
+Used by: one of the maintainers' own projects. Not widely seen in the community.
 
 ### Agent Naming Conventions
 

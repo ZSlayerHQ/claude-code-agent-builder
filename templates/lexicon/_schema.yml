@@ -241,7 +241,7 @@ status:
     - scaffold_stub     # placeholder; named owner-agent must flesh out before use
   description: >
     `gold` resources are CI-enforced. `draft` resources allow placeholders in
-    optional layers. `scaffold_stub` resources fail `pnpm lexicon:check` if any
+    optional layers. `scaffold_stub` resources fail the project's lexicon check if any
     code references them — they exist to reserve the name only.
 
 # ---------------------------------------------------------------------------

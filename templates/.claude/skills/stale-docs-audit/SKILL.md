@@ -88,7 +88,7 @@ git log --oneline --all > .stale-docs-audit/all-shas.txt
 # Then grep each SHA cite and check existence
 ```
 
-**Cross-repo SHA caveat:** If the cite is in a doc that explicitly references a sibling repo ("propscout SHA abc1234 shows..."), the SHA lives in the sibling — check there instead. The skill should heuristically detect cross-repo cites by proximity to a `../<repo>/` or `github.com/<org>/<repo>` token within ~3 lines.
+**Cross-repo SHA caveat:** If the cite is in a doc that explicitly references a sibling repo ("sibling-repo SHA abc1234 shows..."), the SHA lives in the sibling — check there instead. The skill should heuristically detect cross-repo cites by proximity to a `../<repo>/` or `github.com/<org>/<repo>` token within ~3 lines.
 
 **Reports as:** `<doc>:<line>: cited SHA \`abc1234\` not in repo history (rebased or always wrong)`
 

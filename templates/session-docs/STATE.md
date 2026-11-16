@@ -18,9 +18,9 @@ Facts the AI must not contradict. Locked decisions, key data shapes, identifiers
 
 _(Examples — replace with project-specific invariants:)_
 
-- _(Locked decision — e.g. "Score = 6 dimensions + risk penalty; ScoreBreakdownV2 required for any 7th")_
-- _(Key entity shape — e.g. "Property canonical id = uprn, fallback address_hash")_
-- _(Naming convention — e.g. "All currency stored as integer pence at DB layer")_
+- _(Locked decision — e.g. "Score = N dimensions + risk penalty; a new version is required to add one")_
+- _(Key entity shape — e.g. "Order canonical id = order_number, fallback external_ref")_
+- _(Naming convention — e.g. "All currency stored as integer minor units at DB layer")_
 
 ## Active work
 
