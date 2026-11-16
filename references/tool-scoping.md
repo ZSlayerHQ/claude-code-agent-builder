@@ -66,7 +66,7 @@ The canonical mapping. Every tool inclusion has a rationale; every exclusion is 
 | Tool | Rationale |
 |------|-----------|
 | Read/Grep | Reads existing code and project context to ground research |
-| Write/Edit | Saves research reports to `research/` directory |
+| Write/Edit | Saves research reports to `docs/research/` |
 | WebFetch | Reads documentation pages, GitHub READMEs, changelogs |
 | WebSearch | Searches for libraries, benchmarks, comparisons |
 | `mcp__context7` | Looks up specific library docs when evaluating candidates |

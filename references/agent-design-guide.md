@@ -24,7 +24,7 @@ invocation: When investigating unfamiliar problem domains or evaluating technica
 tools: [Read, Write, Edit, Grep, WebFetch, WebSearch, mcp__context7]
 ---
 ```
-Key differentiators: WebFetch + WebSearch for external access. Writes to `research/`. Output is comparison matrices with recommendations, not code. Must include honest trade-offs.
+Key differentiators: WebFetch + WebSearch for external access. Writes to `docs/research/`. Output is comparison matrices with recommendations, not code. Must include honest trade-offs.
 
 ### 1.3 Coder / Builder
 
